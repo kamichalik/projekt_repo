@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Kategorie{% endblock %}
+
+{% block body %}
+
+<div class="content-wrapper container">
+    <h1 class="page-title">Kategorie</h1>
+
+    <div class="row">
+        <div class="category-wrapper col-md-12">
+        {% for category in categories %}
+            {% set className="" %}
+                <h4 class="category-item {{ className }}" id="category-list"><a href="{{  url ("postings_in_category", {'id':category.id}) }}">{{ category.name }}</a>
+                </h4>
+
+                {{ include('category/_delete_form.html.twig', {
+                    'category':category
+                })
+                }}
+
+        {% endfor %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="pagination">
+            {{ include ("/_pagination.html.twig", {
+                'pageNumber':pageNumber,
+                'path':'categories'
+            })
+            }}
+        </div>
+    </div>
+
+</div>
+{% endblock %}

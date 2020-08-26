@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+
+<div class="form-wrapper">
+    <h1 class="page-title">Utwórz ogłoszenie</h1>
+
+    <div class="content-wrapper">
+        {{ include ('posting/_form.html.twig',
+            {'post':postingForm
+            })
+        }}
+    </div>
+
+</div>
+
+{% endblock %}

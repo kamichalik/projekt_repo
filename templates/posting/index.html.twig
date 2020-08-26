@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ogłoszenia{% endblock %}
+
+{% block body %}
+
+<div class="site-wrapper">
+
+    <h1 class="page-title">Ogłoszenia </h1>
+
+    <div class="container">
+
+        <div class="row">
+            <div class="category-wrapper col-md-4">
+                <h3>Wybierz kategorię</h3>
+                {% for category in categories %}
+                  {% set className="" %}
+                    {% if currentCategory is not null and category.id == currentCategory.id %}
+                        {% set className="current-category" %}
+                    {% endif %}
+                    <h4 class="category-item {{ className }}"><a href="{{  url ("postings_in_category", {'id':category.id}) }}">{{ category.name }}</a>
+                    </h4>
+                {% endfor %}
+            </div>
+
+            <div class="postings-wrapper col-md-8">
+                {% for post in postings %}
+                    <div class="postings-item-wrapper row">
+                        <div class="col-md-6">
+                            <h3 class="post-title"><a href = "/posting/{{ post.id }}"> {{ post.title }}
+                                {% if post.comments|length>0 %}
+                                {{ post.comments|length}} {{  post.getCommentsHeader() }}
+                               {% endif %}
+                            </a></h3>
+
+                            {{ include ("posting/_tags.html.twig", {
+                                'post':post
+                                })
+                            }}
+                               {% if post.category is not empty %}
+                                    <span>{{ post.category.name }}</span>
+                                {% endif %}
+                            <p>
+                                {{ post.description }}
+                            </p>
+                        </div>
+
+                        <div class="img-wrapper col-md-6">
+                            {{ include ("posting/_img.html.twig", {
+                                'post':post
+                                })
+                            }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="pagination">
+                {{ include ("/_pagination.html.twig", {
+                    'pageNumber':pageNumber,
+                    'path':'postings'
+                })
+                }}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

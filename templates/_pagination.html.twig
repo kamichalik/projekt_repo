@@ -1,0 +1,17 @@
+{% block body %}
+<style>
+
+</style>
+
+<div class="pagination">
+    {% if pageNumber > 1 %}
+        <a href=" {{ url(path, {'pageNumber': pageNumber - 1}) }} ">
+            <img src="/img/arrow_back.png" style="height:40px">
+        </a>
+    {% endif %}
+    <a href="{{ url(path, {'pageNumber': pageNumber + 1}) }} ">
+        <img src="/img/arrow_next.png" style="height:40px">
+    </a>
+</div>
+
+{% endblock %}

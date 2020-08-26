@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<style>
+
+</style>
+
+<div class="form-wrapper ">
+
+    {{ form(profileForm) }}
+
+        {% if passwordError is not empty %}
+            <div class="alert alert-danger">
+                {{ passwordError }}
+            </div>
+        {% endif %}
+
+    {{ form(changePasswordForm) }}
+
+</div>
+
+{% endblock %}

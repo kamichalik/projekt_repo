@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ogłoszenia{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto;  width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    .content-wrapper {float:left; width: 50%;}
+    .img-wrapper {float:right; width: 50%;}
+    .img-wrapper img {border-radius: 20px; width: 100%;}
+    .category-wrapper {background-color: #1b9448; color: white;}
+</style>
+
+<div class="example-wrapper">
+    <h1>Ogłoszenia </h1>
+    <div>
+        <table>
+            <thead>
+                <td>id</td>
+                <td>tytuł</td>
+                <td>czy aktywny</td>
+                <td>kategoria</td>
+                <td>tagi</td>
+                <td>treść</td>
+                <td>img</td>
+                <td>komentarze</td>
+                <td>akcje</td>
+            </thead>
+            <tbody>
+                {% for post in postings %}
+                    <tr>
+                        <td>{{ post.id }}</td>
+                        <td>{{ post.title }}</td>
+                        <td>{% if post.isActive == 1 %}
+                                <img src="/img/check.jpg" style="height:20px">
+                            {% else %}
+                                <img src="/img/not_check.jpg" style="height:20px">
+                            {% endif %}
+                        </td>
+                        <td>{% if post.category is not empty %}
+                                <span>{{ post.category.name }}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>{{ post.tags }}</td>
+                        <td>{{ post.description}}</td>
+                        <td>{{ include ("posting/_img.html.twig", {
+                                'post':post,
+                                'isSmall':50
+                            } )
+                            }}</td>
+                        <td>{{ post.comments|length}}</td>
+                        <td>
+                            {% if post.isActive == 0 %}
+                            <a href="{{ url('activate', {'id': post.id}) }}">aktywuj</a>
+                            {% endif %}
+                            <button>usuń</button>
+                        </td>
+
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+</div>
+{% endblock %}

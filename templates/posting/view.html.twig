@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+<style>
+    .post-wrapper {margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif;}
+
+
+</style>
+
+<div class="content-wrapper container">
+    <h1 class="page-title">{{ post.title }}</h1>
+
+    <div class="post-content">
+        {{ include ("posting/_tags.html.twig", {
+            'post':post
+            })
+        }}
+        <p>
+            {{ post.description }}
+        </p>
+    </div>
+    <div class="img-wrapper">
+        {{ include ("posting/_img.html.twig", {
+            'post':post
+            })
+        }}
+    </div>
+    <div class="comments-wrapper">
+        {% for comment in post.comments %}
+        <div class="comment-content">
+            <span>{{ comment.date|date ('Y-m-d h:i') }}</span>
+            <p>
+                {{ comment.content }}
+            </p>
+        </div>
+
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}
