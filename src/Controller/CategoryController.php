@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CategoryController extends AbstractController
 {
@@ -39,7 +40,7 @@ class CategoryController extends AbstractController
     }
 
     /**
-     * @Route("/category/{pageNumber}", name="categories", defaults={"pageNumber"=1})
+     * @Route("/categories/{pageNumber}", name="categories", defaults={"pageNumber"=1})
      */
     public function index($pageNumber)
     {
@@ -58,16 +59,15 @@ class CategoryController extends AbstractController
     }
 
     /**
-     * @Route("/category/{id}/update", name="category_update")
+     * @Route("/category/{id}/update", name="category_update", methods={"GET","PUT"})
      */
     public function update(Request $request, $id)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $category = $this->getCategory();
-        $form = $this->createForm(CategoryType::class, $category);
+        $category = $this->getCategory($id);
+        $form = $this->createForm(CategoryType::class, $category, ['method' => 'PUT']);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $category = $form->getData();
             $doctrine = $this->getDoctrine()->getManager();
@@ -102,24 +102,16 @@ class CategoryController extends AbstractController
         return $category;
     }
 
-    /**
-     * @param $category
-     */
-    private function persist($category): void
-    {
-        $doctrine = $this->getDoctrine()->getManager();
-        $doctrine->persist($category);
-        $doctrine->flush();
-    }
+
 
     /**
      * @Route("/category/{id}", name="category_delete", methods={"DELETE"})
      */
-    public function delete(Request $request, Category $category): RedirectResponse
+    public function delete(Request $request, TranslatorInterface $translator, Category $category): RedirectResponse
     {
         if ($this->isCsrfTokenValid('delete'.$category->getId(), $request->request->get('_token'))) {
             if (count($category->getPostings()) > 0) {
-                $this->addFlash('danger', 'Kategoria niepusta');
+                $this->addFlash('danger', $translator->trans('category.empty'));
             } else {
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->remove($category);

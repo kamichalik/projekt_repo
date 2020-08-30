@@ -18,12 +18,14 @@
         "symfony/framework-bundle": "5.1.*",
         "symfony/security-bundle": "5.1.*",
         "symfony/security-csrf": "5.1.*",
+        "symfony/translation": "5.1.*",
         "symfony/twig-bundle": "5.1.*",
         "symfony/validator": "5.1.*",
         "symfony/web-server-bundle": "^4.4.9",
         "symfony/yaml": "5.1.*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+      "ext-http": "*"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",

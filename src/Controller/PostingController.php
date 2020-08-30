@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Form\ChangePasswordType;
 use App\Form\PostingType;
 use App\Form\ProfileType;
+use http\Env\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -45,9 +46,12 @@ class PostingController extends AbstractController
     }
 
     /**
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\Response
      * @Route("/posting/{id}", name="posting")
      */
-    public function show($id)
+
+    public function show($id): Response
     {
         $posting = $this->getPosting($id);
 
@@ -79,7 +83,7 @@ class PostingController extends AbstractController
     }
 
     /**
-     * @Route("/create", name="posting_create")
+     * @Route("/posting/create", name="posting_create")
      */
     public function create(Request $request)
     {
@@ -107,10 +111,10 @@ class PostingController extends AbstractController
 
     /**
      * @param $id
-     *
      * @return Posting
      */
-    private function getPosting($id)
+
+    private function getPosting($id): Posting
     {
         $doctrineRepo = $this->getRepository();
         $posting = $doctrineRepo->find($id);
@@ -131,7 +135,7 @@ class PostingController extends AbstractController
     /**
      * @Route("/{id}/activate", name="activate")
      */
-    public function activate($id)
+    public function activate($id): RedirectResponse
     {
         $posting = $this->getPosting($id);
         $posting->setIsActive(1);
@@ -141,9 +145,11 @@ class PostingController extends AbstractController
     }
 
     /**
-     * @Route("/postings-in-category/{id}", name="postings_in_category")
+     * @param int $id
+     * @return \Symfony\Component\HttpFoundation\Response http response
+     * @Route("/category/{id}/postings", name="postings_in_category")
      */
-    public function categoryPostings($id)
+    public function categoryPostings(int $id): Response
     {
         $postings = $this->getRepository()->findBy(['is_active' => 1, 'category' => $id], ['id' => 'desc']);
 
@@ -153,9 +159,12 @@ class PostingController extends AbstractController
     }
 
     /**
-     * @param $pageNumber
+     * @param array $postings
+     * @param int $pageNumber
+     * @param Category|null $currentCategory
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    private function renderPostings(array $postings, $pageNumber, $currentCategory = null): \Symfony\Component\HttpFoundation\Response
+    private function renderPostings(array $postings, int $pageNumber, Category $currentCategory = null): \Symfony\Component\HttpFoundation\Response
     {
         $categories = $this->getDoctrine()->getRepository(Category::class)->findBy([], ['id' => 'desc']);
 
@@ -167,47 +176,5 @@ class PostingController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/user-edit", name="user_edit")
-     */
-    public function userEdit(Request $request, UserPasswordEncoderInterface $passwordEncoder)
-    {
-        $error = '';
 
-        $emailForm = $this->createForm(ProfileType::class, ['email' => $this->getUser()->getUsername()]);
-        $passwordForm = $this->createForm(ChangePasswordType::class);
-
-        $emailForm->handleRequest($request);
-        $passwordForm->handleRequest($request);
-
-        $repository = $this->getDoctrine()->getRepository(User::class);
-        $user = $repository->find($this->getUser());
-
-        if ($emailForm->isSubmitted() && $emailForm->isValid()) {
-            $user->setEmail($emailForm->getData()['email']);
-            $this->persist($user);
-
-            $this->addFlash('success', 'Zmieniono email użytkownika');
-        }
-
-        if ($passwordForm->isSubmitted() && $passwordForm->isValid()) {
-            $data = $passwordForm->getData();
-            $newPassword = $data['password'];
-
-            if (!$passwordEncoder->isPasswordValid($this->getUser(), $data['currentPassword'])) {
-                $error = 'Nieprawidłowe hasło';
-            } elseif ($newPassword !== $data['repeatPassword']) {
-                $error = 'Podane hasła nie są takie same';
-            } else {
-                $user->setPassword($passwordEncoder->encodePassword($this->getUser(), $newPassword));
-                $this->persist($user);
-            }
-        }
-
-        return $this->render('security/_profileform.html.twig', [
-            'profileForm' => $emailForm->createView(),
-            'changePasswordForm' => $passwordForm->createView(),
-            'passwordError' => $error,
-        ]);
-    }
 }

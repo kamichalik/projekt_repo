@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+<style>
+
+</style>
+
+<div class="form-wrapper">
+    <h1 class="page-title">{% trans %}category.header.update{% endtrans %} </h1>
+
+    <div class="content-wrapper">
+        {{ include ('category/_form.html.twig',
+            {'category':categoryForm
+            })
+        }}
+    </div>
+
+</div>
+
+{% endblock %}
