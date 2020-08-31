@@ -1,4 +1,7 @@
 <?php
+/**
+ * Login type.
+ */
 
 namespace App\Form;
 
@@ -8,8 +11,15 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+/**
+ * Class LoginType
+ */
 class LoginType extends AbstractType
 {
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array                $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder

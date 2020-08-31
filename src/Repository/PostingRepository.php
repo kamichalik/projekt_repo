@@ -1,4 +1,7 @@
 <?php
+/**
+ * Posting repository.
+ */
 
 namespace App\Repository;
 
@@ -14,6 +17,11 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class PostingRepository extends ServiceEntityRepository
 {
+    /**
+     * PostingRepository constructor.
+     *
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Posting::class);

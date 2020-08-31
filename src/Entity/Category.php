@@ -1,4 +1,7 @@
 <?php
+/**
+ * Category entity.
+ */
 
 namespace App\Entity;
 
@@ -29,21 +32,35 @@ class Category
      */
     private $postings;
 
+    /**
+     * Category constructor.
+     */
     public function __construct()
     {
         $this->postings = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return string|null
+     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
+    /**
+     * @param string $name
+     *
+     * @return $this
+     */
     public function setName(string $name): self
     {
         $this->name = $name;
@@ -59,6 +76,11 @@ class Category
         return $this->postings;
     }
 
+    /**
+     * @param Posting $posting
+     *
+     * @return $this
+     */
     public function addPosting(Posting $posting): self
     {
         if (!$this->postings->contains($posting)) {
@@ -69,6 +91,11 @@ class Category
         return $this;
     }
 
+    /**
+     * @param Posting $posting
+     *
+     * @return $this
+     */
     public function removePosting(Posting $posting): self
     {
         if ($this->postings->contains($posting)) {

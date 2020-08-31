@@ -1,4 +1,7 @@
 <?php
+/**
+ * Posting entity.
+ */
 
 namespace App\Entity;
 
@@ -57,23 +60,37 @@ class Posting
     /**
      * @ORM\Column(type="boolean")
      */
-    private $is_active;
+    private $isActive;
 
+    /**
+     * Posting constructor.
+     */
     public function __construct()
     {
         $this->comments = new ArrayCollection();
     }
 
+    /**
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    /**
+     * @return \DateTimeInterface|null
+     */
     public function getDate(): ?\DateTimeInterface
     {
         return $this->date;
     }
 
+    /**
+     * @param \DateTimeInterface $date
+     *
+     * @return $this
+     */
     public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
@@ -81,11 +98,19 @@ class Posting
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
+    /**
+     * @param string $description
+     *
+     * @return $this
+     */
     public function setDescription(string $description): self
     {
         $this->description = $description;
@@ -93,11 +118,19 @@ class Posting
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
     public function getTags(): ?string
     {
         return $this->tags;
     }
 
+    /**
+     * @param string $tags
+     *
+     * @return $this
+     */
     public function setTags(string $tags): self
     {
         $this->tags = $tags;
@@ -105,16 +138,27 @@ class Posting
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getSeparatedTags()
     {
         return explode(',', $this->tags);
     }
 
+    /**
+     * @return string|null
+     */
     public function getImg(): ?string
     {
         return $this->img;
     }
 
+    /**
+     * @param string $img
+     *
+     * @return $this
+     */
     public function setImg(string $img): self
     {
         $this->img = $img;
@@ -122,6 +166,9 @@ class Posting
         return $this;
     }
 
+    /**
+     * @return null
+     */
     public function getImgPath()
     {
         if ((!empty($this->img) && 0 === strpos($this->img, 'https')) &&
@@ -132,11 +179,19 @@ class Posting
         return null;
     }
 
+    /**
+     * @return string|null
+     */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
+    /**
+     * @param string $title
+     *
+     * @return $this
+     */
     public function setTitle(string $title): self
     {
         $this->title = $title;
@@ -144,11 +199,19 @@ class Posting
         return $this;
     }
 
+    /**
+     * @return Category|null
+     */
     public function getCategory(): ?Category
     {
         return $this->category;
     }
 
+    /**
+     * @param Category|null $category
+     *
+     * @return $this
+     */
     public function setCategory(?Category $category): self
     {
         $this->category = $category;
@@ -164,6 +227,11 @@ class Posting
         return $this->comments;
     }
 
+    /**
+     * @param Comment $comment
+     *
+     * @return $this
+     */
     public function addComment(Comment $comment): self
     {
         if (!$this->comments->contains($comment)) {
@@ -174,6 +242,11 @@ class Posting
         return $this;
     }
 
+    /**
+     * @param Comment $comment
+     *
+     * @return $this
+     */
     public function removeComment(Comment $comment): self
     {
         if ($this->comments->contains($comment)) {
@@ -187,6 +260,9 @@ class Posting
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getCommentsHeader()
     {
         $counter = count($this->getComments());
@@ -203,14 +279,22 @@ class Posting
         }
     }
 
+    /**
+     * @return bool|null
+     */
     public function getIsActive(): ?bool
     {
-        return $this->is_active;
+        return $this->isActive;
     }
 
-    public function setIsActive(bool $is_active): self
+    /**
+     * @param bool $isActive
+     *
+     * @return $this
+     */
+    public function setIsActive(bool $isActive): self
     {
-        $this->is_active = $is_active;
+        $this->isActive = $isActive;
 
         return $this;
     }

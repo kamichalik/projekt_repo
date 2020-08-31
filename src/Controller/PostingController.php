@@ -1,4 +1,7 @@
 <?php
+/**
+ * Posting controller.
+ */
 
 namespace App\Controller;
 
@@ -8,21 +11,32 @@ use App\Entity\User;
 use App\Form\ChangePasswordType;
 use App\Form\PostingType;
 use App\Form\ProfileType;
+use App\Repository\CategoryRepository;
 use http\Env\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * Class PostingController
+ */
 class PostingController extends AbstractController
 {
     /**
+     * Index action.
+     *
+     * @param int $pageNumber
+     *
+     * @return Response|\Symfony\Component\HttpFoundation\Response
+     *
      * @Route("/postings/{pageNumber}", name="postings", defaults={"pageNumber"=1})
      */
-    public function index($pageNumber)
+    public function index(int $pageNumber)
     {
-        $limit = 3;
+        $limit = 10;
         $postings = $this->getRepository()->findBy(
             ['is_active' => 1],
             ['id' => 'desc'],
@@ -34,6 +48,10 @@ class PostingController extends AbstractController
     }
 
     /**
+     * Index action admin view.
+     *
+     * @return Response|\Symfony\Component\HttpFoundation\Response
+     *
      * @Route("/all", name="postings_admin")
      */
     public function indexAdmin()
@@ -46,31 +64,44 @@ class PostingController extends AbstractController
     }
 
     /**
+     * View action.
+     *
      * @param int $id
-     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @return Response|\Symfony\Component\HttpFoundation\Response
+     *
      * @Route("/posting/{id}", name="posting")
      */
-
-    public function show($id): Response
+    public function show(int $id):Response
     {
         $posting = $this->getPosting($id);
 
         return $this->render('posting/view.html.twig', [
             'post' => $posting,
-            ]);
+        ]);
     }
 
     /**
-     * @Route("/posting/{id}/update", name="posting_update")
+     * Update action.
+     *
+     * @param \Symfony\Component\HttpFoundation\Request $request    HTTP request
+     * @param TranslatorInterface                       $translator Translator
+     * @param int                                       $id         Posting id
+     *
+     * @return Response|\Symfony\Component\HttpFoundation\Response
+     *
+     * @Route("/posting/{id}/update", name="posting_update", methods={"GET","PUT"})
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, TranslatorInterface $translator, int $id)
     {
         $posting = $this->getPosting($id);
-        $form = $this->createForm(PostingType::class, $posting);
-//        $form->handleRequest($request);
+        $form = $this->createForm(PostingType::class, $posting, ['method' => 'PUT']);
+        $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $posting = $form->getData();
             $this->persist($posting);
+
+            $this->addFlash('success', $translator->trans('posting.created'));
 
             return $this->redirect('postings');
         }
@@ -83,9 +114,15 @@ class PostingController extends AbstractController
     }
 
     /**
+     * Create action.
+     *
+     * @param Request $request
+     *
+     * @return Response
+     *
      * @Route("/posting/create", name="posting_create")
      */
-    public function create(Request $request)
+    public function create(Request $request):Response
     {
         $posting = new Posting();
         $form = $this->createForm(PostingType::class, $posting);
@@ -104,17 +141,59 @@ class PostingController extends AbstractController
         ]);
     }
 
+    /**
+     * @param int $id
+     *
+     * @return RedirectResponse
+     *
+     * @Route("/{id}/activate", name="activate")
+     */
+    public function activate(int $id): RedirectResponse
+    {
+        $posting = $this->getPosting($id);
+        $posting->setIsActive(1);
+        $this->persist($posting);
+
+        return new RedirectResponse('/all');
+    }
+
+    /**
+     * View actions in category.
+     *
+     * @param int $id
+     *
+     * @return Response|\Symfony\Component\HttpFoundation\Response
+     *
+     * @Route("/category/{id}/postings", name="postings_in_category")
+     */
+    public function categoryPostings(int $id)
+    {
+        $postings = $this->getRepository()->findBy(['is_active' => 1, 'category' => $id], ['id' => 'desc']);
+
+        /** @var CategoryRepository $categoryRepository */
+        $categoryRepository = $this->getDoctrine()->getRepository(Category::class);
+
+        return $this->renderPostings($postings, 1, $categoryRepository->find($id));
+    }
+
+    /**
+     * Repository getter.
+     *
+     * @return \Doctrine\Persistence\ObjectRepository
+     */
     private function getRepository(): \Doctrine\Persistence\ObjectRepository
     {
         return $this->getDoctrine()->getRepository(Posting::class);
     }
 
     /**
-     * @param $id
+     * Posting getter
+     *
+     * @param int $id
+     *
      * @return Posting
      */
-
-    private function getPosting($id): Posting
+    private function getPosting(int $id): Posting
     {
         $doctrineRepo = $this->getRepository();
         $posting = $doctrineRepo->find($id);
@@ -123,6 +202,8 @@ class PostingController extends AbstractController
     }
 
     /**
+     * Persist.
+     *
      * @param $posting
      */
     private function persist($posting): void
@@ -133,35 +214,12 @@ class PostingController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/activate", name="activate")
-     */
-    public function activate($id): RedirectResponse
-    {
-        $posting = $this->getPosting($id);
-        $posting->setIsActive(1);
-        $this->persist($posting);
-
-        return new RedirectResponse('/all');
-    }
-
-    /**
-     * @param int $id
-     * @return \Symfony\Component\HttpFoundation\Response http response
-     * @Route("/category/{id}/postings", name="postings_in_category")
-     */
-    public function categoryPostings(int $id): Response
-    {
-        $postings = $this->getRepository()->findBy(['is_active' => 1, 'category' => $id], ['id' => 'desc']);
-
-        $categoryRepository = $this->getDoctrine()->getRepository(Category::class);
-
-        return $this->renderPostings($postings, 1, $categoryRepository->find($id));
-    }
-
-    /**
-     * @param array $postings
-     * @param int $pageNumber
+     * Render postings.
+     *
+     * @param array         $postings
+     * @param int           $pageNumber
      * @param Category|null $currentCategory
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     private function renderPostings(array $postings, int $pageNumber, Category $currentCategory = null): \Symfony\Component\HttpFoundation\Response
@@ -173,8 +231,7 @@ class PostingController extends AbstractController
             'categories' => $categories,
             'currentCategory' => $currentCategory,
             'pageNumber' => $pageNumber,
+
         ]);
     }
-
-
 }

@@ -6,7 +6,9 @@
 
 <div class="site-wrapper">
 
-    <h1 class="page-title">Ogłoszenia </h1>
+    <div class="jumbotron">
+        <h1>Serwis ogłoszeniowy</h1>
+    </div>
 
     <div class="container">
 
@@ -24,32 +26,44 @@
             </div>
 
             <div class="postings-wrapper col-md-8">
+
                 {% for post in postings %}
-                    <div class="postings-item-wrapper row">
-                        <div class="col-md-6">
-                            <h3 class="post-title"><a href = "/posting/{{ post.id }}"> {{ post.title }}
-                                {% if post.comments|length>0 %}
-                                {{ post.comments|length}} {{  post.getCommentsHeader() }}
-                               {% endif %}
-                            </a></h3>
+                    <div class="container py-3">
+                        <div class="card">
+                            <div class="card-horizontal" style="display: flex;">
 
-                            {{ include ("posting/_tags.html.twig", {
-                                'post':post
-                                })
-                            }}
-                               {% if post.category is not empty %}
-                                    <span>{{ post.category.name }}</span>
-                                {% endif %}
-                            <p>
-                                {{ post.description }}
-                            </p>
-                        </div>
+                                <div class="row card-body">
+                                    <div class="col-md-8 ">
+                                        <div class="card-header text-muted">
+                                            {% if post.category is not empty %}
+                                                <a href="{{  url ("postings_in_category", {'id':post.category.id}) }}">{{ post.category.name }}</a>
+                                            {% endif %}
+                                        </div>
+                                        <h4 class="card-title py-3">{{ post.title }}</h4>
+{#                                        <h6 class="card-subtitle text-muted">#}
+{#                                            {{ include ("posting/_tags.html.twig",#}
+{#                                                {'post':post})#}
+{#                                            }}</h6>#}
 
-                        <div class="img-wrapper col-md-6">
-                            {{ include ("posting/_img.html.twig", {
-                                'post':post
-                                })
-                            }}
+                                        <h6 class="card-subtitle text-muted">{{ post.date ? post.date|date('Y-m-d H:i') : '' }}</h6>
+                                        <p class="card-text py-2">{{ post.description }}</p>
+                                        <a href="/posting/{{ post.id }}" class="card-link">Read More</a>
+                                        <p class="card-text">{% if post.comments|length>0 %}
+                                                {{ post.comments|length}} {{  post.getCommentsHeader() }}
+                                            {% endif %}
+                                        </p>
+                                    </div>
+
+                                <div class="col-md-4 my-auto">
+                                    <img src="https://picsum.photos/600/400" class="w-100">
+                                    {{ include ("posting/_img.html.twig", {
+                                        'post':post
+                                    })
+                                    }}
+                                </div>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 {% endfor %}

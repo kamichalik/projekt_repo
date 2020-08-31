@@ -1,27 +1,39 @@
 <?php
+/**
+ * User controller.
+ */
 
 namespace App\Controller;
-
 
 use App\Entity\User;
 use App\Form\ChangePasswordType;
 use App\Form\ProfileType;
+use http\Env\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-
+/**
+ * Class UserController
+ */
 class UserController extends AbstractController
 {
     /**
-     * @Route("/user/edit", name="user_edit")
+     * Edit user.
+     *
+     * @param Request                      $request
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @Route("/user/edit", name="user_edit", methods={"GET","PUT"})
      */
-    public function userEdit(Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    public function userEdit(Request $request, UserPasswordEncoderInterface $passwordEncoder):Response
     {
         $error = '';
 
-        $emailForm = $this->createForm(ProfileType::class, ['email' => $this->getUser()->getUsername()]);
+        $emailForm = $this->createForm(ProfileType::class, ['email' => $this->getUser()->getUsername()], ['method' => 'PUT']);
         $passwordForm = $this->createForm(ChangePasswordType::class);
 
         $emailForm->handleRequest($request);
@@ -59,9 +71,9 @@ class UserController extends AbstractController
     }
 
     /**
-     * @param $user
+     * @param User $user
      */
-    private function persist($user): void
+    private function persist(User $user): void
     {
         $doctrine = $this->getDoctrine()->getManager();
         $doctrine->persist($user);

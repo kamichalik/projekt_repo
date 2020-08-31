@@ -1,4 +1,16 @@
 category:
-  empty: Kategoria niepusta
+  not_empty: Kategoria niepusta
+  created: Stworzono kategorię
+  deleted: Usunięto kategorię
+  updated: Edytowano kategorię
   header:
     update: Edytuj kategorię
+
+posting:
+  created: Stworzono post
+  deleted: Usunięto post
+  updated: Edytowano post
+
+log:
+  in: Zalogowano
+  out: Wylogowano

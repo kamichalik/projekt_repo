@@ -7,39 +7,73 @@
         {% block stylesheets %}
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
-            <link rel="stylesheet" href="/css/style.css">
+{#            <link rel="stylesheet" href="/css/style.css">#}
 
             <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Raleway:ital,wght@0,400;0,500;0,600;1,400&family=Varta:wght@500&display=swap" rel="stylesheet">
 
+            <style>
+                h1 {font-family: 'Raleway', sans-serif; !important;}
+                body {font-family: 'Lato', sans-serif; !important;}
+            </style>
         {% endblock %}
     </head>
     <body>
 
-    <div class="container-fixed" id="navBar">
+    <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
+        <div class="container">
+            <button class="navbar-toggler" data-toggle="collapse" data-target="#mainNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <div class="navbar row nav-login">
-            {% if app.user %}
-                <span>Zalogowany jako: {{ app.user.username }}</span>
-                <span><a href="{{ path('user_edit') }}">Edytuj profil</a></span>
-            {% else %}
-                <span>Nie jesteś zalogowany </span>
-            {% endif %}
-                <a href="{{ path('app_login') }}" class="nav-item">Zaloguj</a>
-                <a href="{{ path('app_logout') }}" class="nav-item">Wyloguj</a>
+            <div class="collapse navbar-collapse" id="mainNav">
+                <div class="navbar-nav">
+                    <a class="nav-link dropdown-toggle" href="" id="postingsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Posty</a>
+                        <div class="dropdown-menu bg-primary">
+                            <a class="nav-item nav-link" href="{{ url('postings') }}">Show All</a>
+                            <a class="nav-item nav-link" href="{{ url('posting_create') }}">Create Posting</a>
+                            <a class="nav-item nav-link" href="{{ url('posting_update', {'id':98}) }}">Update Posting</a>
+                        </div>
+                </div>
+                <div class="navbar-nav">
+                    <a class="nav-link dropdown-toggle" href="" id="categoriesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Kategorie</a>
+                        <div class="dropdown-menu bg-primary">
+                            <a class="nav-item nav-link" href="{{ url('categories', {'pageNumber':1}) }}">Show All</a>
+                            <a class="nav-item nav-link" href="{{ url('category_create') }}">Create Category</a>
+                            <a class="nav-item nav-link" href="{{ url('category_update', {'id':2}) }}">Update Category</a>
+                        </div>
+                </div>
+                <div class="navbar-nav">
+                    <a class="nav-link dropdown-toggle" href="" id="commentsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Komentarze</a>
+                        <div class="dropdown-menu bg-primary">
+                            <a class="nav-item nav-link" href="{{ url('comments', {'pageNumber':1}) }}">Show All</a>
+                            <a class="nav-item nav-link" href="{{ url('comment_new') }}">Create Comment</a>
+                            <a class="nav-item nav-link" href="{{ url('comment_update', {'id':1}) }}">Update Comment</a>
+                        </div>
+                </div>
+
+                <div class="navbar-nav navbar-right ml-auto btn-toolbar">
+                    {% if app.user %}
+                        <span class="navbar-text">Zalogowany jako: {{ app.user.username }}</span>
+                        <button type="button" class="btn btn-light navbar-btn navbar-right ml-2">
+                            <a href="{{ path('user_edit') }}">Edytuj profil</a>
+                        </button>
+                        <button type="button" class="btn btn-light navbar-btn navbar-right ml-2">
+                            <a href="{{ path('app_logout') }}" class="nav-item">Wyloguj</a>
+                        </button>
+                    {% else %}
+                        <span class="navbar-text">Nie jesteś zalogowany </span>
+                        <button type="button" class="btn btn-light navbar-btn navbar-right ml-2">
+                            <a href="{{ path('app_login') }}" class="nav-item">Zaloguj</a>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+
         </div>
+    </nav>
 
-        <div class="navbar row">
-            <a href="{{ url('postings') }}" class="nav-item">Postingi</a>
-            <a href="{{ url('posting_create') }}" class="nav-item">Create Posting</a>
-            <a href="{{ url('posting_update', {'id':2}) }} " class="nav-item">Update Posting</a>
-            <a href="{{ url('categories', {'pageNumber':1}) }}" class="nav-item">Kategorie</a>
-            <a href="{{ url('category_create') }}" class="nav-item">Create Category</a>
-{#            <a href="{{ url('category_update', {'id':2}) }}">Update Category</a>#}
-            <a href="{{ url('comment_new') }}" class="nav-item">Create Comment</a>
-            <a href="{{ url('comment_edit', {'id':1}) }}" class="nav-item">Update Comment</a>
 
-        </div>
-    </div>
+
 
     {% for msg in app.flashes('success') %}
         <div class="alert alert-success">

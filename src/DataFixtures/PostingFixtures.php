@@ -1,6 +1,6 @@
 <?php
 /**
- * Task fixtures.
+ * Posting fixtures.
  */
 
 namespace App\DataFixtures;
@@ -22,11 +22,11 @@ class PostingFixtures extends AbstractBaseFixtures
     public function loadData(ObjectManager $manager): void
     {
         $this->createMany(50, 'postings', function ($i) use ($manager) {
-          $category = $manager->getRepository(Category::class)->findBy(
-               ['id' => rand(1, 10)],
-               ['id' => 'desc'],
-               1
-           )[0];
+            $category = $manager->getRepository(Category::class)->findBy(
+                ['id' => rand(1, 10)],
+                ['id' => 'desc'],
+                1
+            )[0];
 
             $posting = new Posting();
             $posting->setIsActive(1);
@@ -42,6 +42,4 @@ class PostingFixtures extends AbstractBaseFixtures
 
         $manager->flush();
     }
-
-
 }

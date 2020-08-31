@@ -1,4 +1,7 @@
 <?php
+/**
+ * User fixtures.
+ */
 
 namespace App\DataFixtures;
 
@@ -7,9 +10,16 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-
+/**
+ * Class UserFixtures
+ */
 class UserFixtures extends AbstractBaseFixtures
 {
+    /**
+     * Load data.
+     *
+     * @param ObjectManager $manager
+     */
     public function loadData(ObjectManager $manager): void
     {
 
@@ -33,6 +43,4 @@ class UserFixtures extends AbstractBaseFixtures
 
         $manager->flush();
     }
-
-
 }
