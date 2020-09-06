@@ -1,21 +1,22 @@
 {% extends 'base.html.twig' %}
-
-
 {% block body %}
-<style>
 
-</style>
-
-<div class="form-wrapper">
-    <h1 class="page-title">Edytuj ogłoszenie</h1>
-
-    <div class="content-wrapper">
-        {{ include ('posting/_form.html.twig',
-            {'post':postingForm
-            })
-        }}
+<div class="container">
+    <h1 class="text-center py-4">{{ 'title.posting_update'|trans }}</h1>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% include 'default/_form.html.twig' with {
+                page_title: 'title.post_update',
+                attr: {
+                    method: 'POST',
+                    action: url('posting_update')
+                },
+                form: form,
+                submit_label: 'action.save'|trans,
+                back_to_list_path: 'postings_admin',
+            } %}
+        </div>
     </div>
-
 </div>
 
 {% endblock %}

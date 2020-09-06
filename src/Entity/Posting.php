@@ -9,6 +9,7 @@ use App\Repository\PostingRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PostingRepository::class)
@@ -39,11 +40,20 @@ class Posting
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Assert\Url(message="Dany url nie jest obrazkiem")
      */
     private $img;
 
     /**
      * @ORM\Column(type="string", length=512)
+     *
+     * @Assert\Type(type="string")
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *     min="3",
+     *     max="64",
+     * )
      */
     private $title;
 
@@ -271,11 +281,11 @@ class Posting
         $ending = intval($ending[strlen($ending) - 1]);
 
         if ((12 !== $counter && 13 !== $counter && 14 !== $counter) && (2 === $ending || 3 === $ending || 4 === $ending)) {
-            return ' komentarze';
+            echo ' komentarze';
         } elseif (1 === $counter) {
-            return ' komentarz';
+            echo ' komentarz';
         } else {
-            return ' komentarzy';
+            echo ' komentarzy';
         }
     }
 

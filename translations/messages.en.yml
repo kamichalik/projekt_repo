@@ -10,7 +10,21 @@ posting:
   created: Post created
   deleted: Post deleted
   updated: Post updated
+  activated: Post activated
+  deactivated: Post deactivated
+
+comment:
+  created: Comment created
+  deleted: Comment deleted
+  updated: Comment updated
+
 
 log:
   in: Logged in
   out: Logged out
+  incorrect_pw: Incorrect password
+  not_match: Passwords do not match
+
+account:
+  created: Account created
+  updated: Account details updated

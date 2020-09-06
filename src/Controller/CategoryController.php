@@ -49,14 +49,15 @@ class CategoryController extends AbstractController
     /**
      * Create action.
      *
-     * @param Request             $request
-     * @param TranslatorInterface $translator
+     * @param Request $request
      *
      * @return Response|\Symfony\Component\HttpFoundation\Response
      *
+     * @throws \Exception
+     *
      * @Route("/category/create", name="category_create")
      */
-    public function create(Request $request, TranslatorInterface $translator)
+    public function create(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -70,28 +71,27 @@ class CategoryController extends AbstractController
             $doctrine->persist($category);
             $doctrine->flush();
 
-            $this->addFlash('success', $translator->trans('category.created'));
+            $this->addFlash('success', 'message.category_created_successfully');
 
             return $this->redirect('/categories');
         }
-        $formView = $form->createView();
 
-        return $this->render('category/create.html.twig', [
-            'categoryForm' => $formView,
-        ]);
+        return $this->render(
+            'category/create.html.twig',
+            ['form' => $form->createView()]
+        );
     }
 
 
     /**
-     * @param Request             $request
-     * @param TranslatorInterface $translator
-     * @param int                 $id
+     * @param Request $request
+     * @param int     $id
      *
      * @return Response|\Symfony\Component\HttpFoundation\Response
      *
      * @Route("/category/{id}/update", name="category_update", methods={"GET","PUT"})
      */
-    public function update(Request $request, TranslatorInterface $translator, int $id)
+    public function update(Request $request, int $id)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -104,7 +104,7 @@ class CategoryController extends AbstractController
             $doctrine->persist($category);
             $doctrine->flush();
 
-            $this->addFlash('success', $translator->trans('category.updated'));
+            $this->addFlash('success', 'message.category_updated_successfully');
 
             return $this->redirect('/categories');
         }
@@ -112,7 +112,7 @@ class CategoryController extends AbstractController
         $formView = $form->createView();
 
         return $this->render('category/update.html.twig', [
-            'categoryForm' => $formView,
+            'form' => $formView,
         ]);
     }
 
@@ -120,25 +120,24 @@ class CategoryController extends AbstractController
     /**
      * Delete action.
      *
-     * @param Request             $request
-     * @param TranslatorInterface $translator
-     * @param Category            $category
+     * @param Request  $request
+     * @param Category $category
      *
      * @return RedirectResponse
      *
      * @Route("/category/{id}", name="category_delete", methods={"DELETE"})
      *
      */
-    public function delete(Request $request, TranslatorInterface $translator, Category $category): RedirectResponse
+    public function delete(Request $request, Category $category): RedirectResponse
     {
         if ($this->isCsrfTokenValid('delete'.$category->getId(), $request->request->get('_token'))) {
             if (count($category->getPostings()) > 0) {
-                $this->addFlash('danger', $translator->trans('category.not_empty'));
+                $this->addFlash('danger', 'message.category_not_empty');
             } else {
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->remove($category);
                 $entityManager->flush();
-                $this->addFlash('danger', $translator->trans('category.deleted'));
+                $this->addFlash('danger', 'message.category_deleted_successfully');
             }
         }
 

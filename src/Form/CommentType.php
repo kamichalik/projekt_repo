@@ -9,6 +9,7 @@ use App\Entity\Comment;
 use App\Entity\Posting;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -25,11 +26,11 @@ class CommentType extends AbstractType
     {
         $builder
             ->add('content')
-            ->add('date')
             ->add('posting', EntityType::class, [
                 'class' => Posting::class,
                 'choice_label' => 'title',
-            ]);
+            ])
+            ->add('save', SubmitType::class);
     }
 
     /**

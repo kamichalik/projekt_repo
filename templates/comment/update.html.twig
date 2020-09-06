@@ -1,15 +1,23 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Update Comment{% endblock %}
-
 {% block body %}
-    <h1 class="page-title">Edytuj komentarz</h1>
 
-    <div class="content-wrapper">
-        {{ include('comment/_form.html.twig', {'button_label': 'Update'}) }}
+    <div class="container">
+        <h1 class="text-center py-4">{{ 'title.comment_update'|trans }}</h1>
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                {% include 'default/_form.html.twig' with {
+                    page_title: 'title.comment_update',
+                    attr: {
+                        method: 'POST',
+                        action: url('comment_update')
+                    },
+                    form: form,
+                    submit_label: 'action.save'|trans,
+                    back_to_list_path: 'comments',
+                } %}
+            </div>
+        </div>
     </div>
 
-    <a href="{{ path('comments') }}">back to list</a>
-
-    {{ include('comment/_delete_form.html.twig') }}
 {% endblock %}

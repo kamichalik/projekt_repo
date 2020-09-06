@@ -1,48 +1,41 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ogłoszenia{% endblock %}
+{% block title %}{{ 'title.postings'|trans }}{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto;  width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-    .content-wrapper {float:left; width: 50%;}
-    .img-wrapper {float:right; width: 50%;}
-    .img-wrapper img {border-radius: 20px; width: 100%;}
-    .category-wrapper {background-color: #1b9448; color: white;}
-</style>
 
-<div class="example-wrapper">
-    <h1>Ogłoszenia </h1>
+<div class="container">
+    <h1 class="text-center py-4">{{ 'title.postings'|trans }}</h1>
     <div>
-        <table>
+        <table class="table">
             <thead>
-                <td>id</td>
-                <td>tytuł</td>
-                <td>czy aktywny</td>
-                <td>kategoria</td>
-                <td>tagi</td>
-                <td>treść</td>
-                <td>img</td>
-                <td>komentarze</td>
-                <td>akcje</td>
+                <th>{{ 'label.id'|trans }}</th>
+                <th>{{ 'label.post_title'|trans }}</th>
+                <th>{{ 'label.is_active'|trans }}</th>
+                <th>{{ 'label.category'|trans }}</th>
+                <th>{{ 'label.tags'|trans }}</th>
+                <th>{{ 'label.description'|trans }}</th>
+                <th>{{ 'label.img'|trans }}</th>
+                <th>{{ 'label.comments'|trans }}</th>
+                <th>{{ 'label.actions'|trans }}</th>
             </thead>
             <tbody>
                 {% for post in postings %}
-                    <tr>
+                    {% if post.isActive ==1 %}
+                    <tr class="table-success">
+                    {% else %}
+                    <tr class="table-danger">
+                    {% endif %}
                         <td>{{ post.id }}</td>
                         <td>{{ post.title }}</td>
-                        <td>{% if post.isActive == 1 %}
-                                <img src="/img/check.jpg" style="height:20px">
+                        <td>
+                            {% if post.isActive == 1 %}
+                                {{ "✓" }}
                             {% else %}
-                                <img src="/img/not_check.jpg" style="height:20px">
+                                {{ "X" }}
                             {% endif %}
                         </td>
-                        <td>{% if post.category is not empty %}
-                                <span>{{ post.category.name }}
-                                </span>
-                            {% endif %}
-                        </td>
+                        <td>{{ post.category.name }}</td>
                         <td>{{ post.tags }}</td>
                         <td>{{ post.description}}</td>
                         <td>{{ include ("posting/_img.html.twig", {
@@ -53,11 +46,16 @@
                         <td>{{ post.comments|length}}</td>
                         <td>
                             {% if post.isActive == 0 %}
-                            <a href="{{ url('activate', {'id': post.id}) }}">aktywuj</a>
+                                <a href="{{ url('activate', {'id': post.id}) }}" class="btn btn-success my-2">{{ 'action.activate'|trans }}</a>
+                            {% else %}
+                                <a href="{{ url('deactivate', {'id': post.id}) }}" class="btn btn-warning my-2">{{ 'action.deactivate'|trans }}</a>
                             {% endif %}
-                            <button>usuń</button>
+                            <a class="btn btn-danger btn-sm ml-2">{{ include('posting/_delete_form.html.twig') }} </a>
                         </td>
-
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4">{{ 'no_records'|trans }}</td>
                     </tr>
                 {% endfor %}
             </tbody>

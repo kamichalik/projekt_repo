@@ -1,18 +1,21 @@
 {% extends 'base.html.twig' %}
-
-
 {% block body %}
 
-<div class="form-wrapper">
-    <h1 class="page-title">Utwórz ogłoszenie</h1>
-
-    <div class="content-wrapper">
-        {{ include ('posting/_form.html.twig',
-            {'post':postingForm
-            })
-        }}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% include 'default/_form.html.twig' with {
+                page_title: 'title.post_create',
+                attr: {
+                    method: 'POST',
+                    action: url('posting_create')
+                },
+                form: form,
+                submit_label: 'action.save'|trans,
+                back_to_list_path: 'categories',
+            } %}
+        </div>
     </div>
-
 </div>
 
 {% endblock %}

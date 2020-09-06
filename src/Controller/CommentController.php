@@ -12,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class CommentController
@@ -41,9 +42,9 @@ class CommentController extends AbstractController
      *
      * @return Response
      *
-     * @Route("/comment/new", name="comment_new", methods={"GET","POST"})
+     * @Route("/comment/new", name="comment_create", methods={"GET","POST"})
      */
-    public function new(Request $request): Response
+    public function create(Request $request): Response
     {
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
@@ -51,8 +52,11 @@ class CommentController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
+            $comment->setDate(new \DateTime('now'));
             $entityManager->persist($comment);
             $entityManager->flush();
+
+            $this->addFlash('success', 'message.comment_created_successfully');
 
             return $this->redirectToRoute('comments');
         }
@@ -97,6 +101,8 @@ class CommentController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
+            $this->addFlash('success', 'message.comment_updated_successfully');
+
             return $this->redirectToRoute('comments');
         }
 
@@ -122,6 +128,8 @@ class CommentController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($comment);
             $entityManager->flush();
+
+            $this->addFlash('success', 'message.comment_deleted_successfully');
         }
 
         return $this->redirectToRoute('comments');

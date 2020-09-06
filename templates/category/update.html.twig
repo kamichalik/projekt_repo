@@ -1,21 +1,24 @@
 {% extends 'base.html.twig' %}
-
-
 {% block body %}
-<style>
 
-</style>
-
-<div class="form-wrapper">
-    <h1 class="page-title">{% trans %}category.header.update{% endtrans %} </h1>
-
-    <div class="content-wrapper">
-        {{ include ('category/_form.html.twig',
-            {'category':categoryForm
-            })
-        }}
+<div class="container">
+    <h1 class="text-center py-4">{{ 'title.category_update'|trans }}</h1>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% include 'default/_form.html.twig' with {
+                page_title: 'title.category_update',
+                page_title_param: {'%id%': category.id},
+                attr: {
+                    method: 'POST',
+                    action: url('category_update', {'id': category.id})
+                },
+                form: form,
+                submit_label: 'action.save'|trans,
+                back_to_list_path: 'categories',
+            } %}
+        </div>
     </div>
-
 </div>
 
 {% endblock %}
+

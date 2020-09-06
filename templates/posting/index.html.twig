@@ -1,26 +1,24 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ogłoszenia{% endblock %}
+{% block title %}{{ 'title.record_list'|trans }}{% endblock %}
 
 {% block body %}
 
-<div class="site-wrapper">
-
     <div class="jumbotron">
-        <h1>Serwis ogłoszeniowy</h1>
+        <h1>{{ 'title.record_list'|trans }}</h1>
     </div>
 
     <div class="container">
 
         <div class="row">
-            <div class="category-wrapper col-md-4">
-                <h3>Wybierz kategorię</h3>
+            <div class="col-md-4">
+                <h3>{{ 'title.sidebar'|trans}}</h3>
                 {% for category in categories %}
                   {% set className="" %}
                     {% if currentCategory is not null and category.id == currentCategory.id %}
                         {% set className="current-category" %}
                     {% endif %}
-                    <h4 class="category-item {{ className }}"><a href="{{  url ("postings_in_category", {'id':category.id}) }}">{{ category.name }}</a>
+                    <h4 class="mt-3" {{ className }}><a href="{{  url ("postings_in_category", {'id':category.id}) }}">{{ category.name }}</a>
                     </h4>
                 {% endfor %}
             </div>
@@ -35,9 +33,7 @@
                                 <div class="row card-body">
                                     <div class="col-md-8 ">
                                         <div class="card-header text-muted">
-                                            {% if post.category is not empty %}
-                                                <a href="{{  url ("postings_in_category", {'id':post.category.id}) }}">{{ post.category.name }}</a>
-                                            {% endif %}
+                                            <a href="{{  url ("postings_in_category", {'id':post.category.id}) }}">{{ post.category.name }}</a>
                                         </div>
                                         <h4 class="card-title py-3">{{ post.title }}</h4>
 {#                                        <h6 class="card-subtitle text-muted">#}
@@ -47,8 +43,8 @@
 
                                         <h6 class="card-subtitle text-muted">{{ post.date ? post.date|date('Y-m-d H:i') : '' }}</h6>
                                         <p class="card-text py-2">{{ post.description }}</p>
-                                        <a href="/posting/{{ post.id }}" class="card-link">Read More</a>
-                                        <p class="card-text">{% if post.comments|length>0 %}
+                                        <a class="card-link" href="{{ url("posting", {'id':post.id}) }}">{{ 'read_more'|trans }}</a>
+                                        <p class="card-text py-2">{% if post.comments|length>0 %}
                                                 {{ post.comments|length}} {{  post.getCommentsHeader() }}
                                             {% endif %}
                                         </p>

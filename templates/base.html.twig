@@ -6,18 +6,17 @@
 
         {% block stylesheets %}
             <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-
-{#            <link rel="stylesheet" href="/css/style.css">#}
-
             <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Raleway:ital,wght@0,400;0,500;0,600;1,400&family=Varta:wght@500&display=swap" rel="stylesheet">
 
             <style>
                 h1 {font-family: 'Raleway', sans-serif; !important;}
                 body {font-family: 'Lato', sans-serif; !important;}
+                .ads-app .dropdown-menu {left: auto;}
             </style>
+
         {% endblock %}
     </head>
-    <body>
+    <body class="ads-app">
 
     <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
         <div class="container">
@@ -25,45 +24,48 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
+            <a href="{{ path('postings') }}" class="nav-item text-white mr-3">{{ 'title.main_page'|trans }}</a>
+            {% if is_granted('ROLE_ADMIN') %}
             <div class="collapse navbar-collapse" id="mainNav">
                 <div class="navbar-nav">
-                    <a class="nav-link dropdown-toggle" href="" id="postingsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Posty</a>
+                    <a class="nav-link dropdown-toggle" href="" id="postingsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ 'title.postings'|trans }}</a>
                         <div class="dropdown-menu bg-primary">
-                            <a class="nav-item nav-link" href="{{ url('postings') }}">Show All</a>
-                            <a class="nav-item nav-link" href="{{ url('posting_create') }}">Create Posting</a>
-                            <a class="nav-item nav-link" href="{{ url('posting_update', {'id':98}) }}">Update Posting</a>
+                            <a class="nav-item nav-link" href="{{ url('postings_admin') }}">{{ 'show_all'|trans }}</a>
+                            <a class="nav-item nav-link" href="{{ url('posting_create') }}">{{ 'title.posting_create'|trans }}</a>
+                            <a class="nav-item nav-link" href="{{ url('posting_update', {'id':98}) }}">{{ 'title.posting_update'|trans }}</a>
                         </div>
                 </div>
                 <div class="navbar-nav">
-                    <a class="nav-link dropdown-toggle" href="" id="categoriesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Kategorie</a>
+                    <a class="nav-link dropdown-toggle" href="" id="categoriesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ 'title.categories'|trans }}</a>
                         <div class="dropdown-menu bg-primary">
-                            <a class="nav-item nav-link" href="{{ url('categories', {'pageNumber':1}) }}">Show All</a>
-                            <a class="nav-item nav-link" href="{{ url('category_create') }}">Create Category</a>
-                            <a class="nav-item nav-link" href="{{ url('category_update', {'id':2}) }}">Update Category</a>
+                            <a class="nav-item nav-link" href="{{ url('categories', {'pageNumber':1}) }}">{{ 'show_all'|trans }}</a>
+                            <a class="nav-item nav-link" href="{{ url('category_create') }}">{{ 'title.category_create'|trans }}</a>
+                            <a class="nav-item nav-link" href="{{ url('category_update', {'id':2}) }}">{{ 'title.category_update'|trans }}</a>
                         </div>
                 </div>
                 <div class="navbar-nav">
-                    <a class="nav-link dropdown-toggle" href="" id="commentsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Komentarze</a>
+                    <a class="nav-link dropdown-toggle" href="" id="commentsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ 'title.comments'|trans }}</a>
                         <div class="dropdown-menu bg-primary">
-                            <a class="nav-item nav-link" href="{{ url('comments', {'pageNumber':1}) }}">Show All</a>
-                            <a class="nav-item nav-link" href="{{ url('comment_new') }}">Create Comment</a>
-                            <a class="nav-item nav-link" href="{{ url('comment_update', {'id':1}) }}">Update Comment</a>
+                            <a class="nav-item nav-link" href="{{ url('comments', {'pageNumber':1}) }}">{{ 'show_all'|trans }}</a>
+                            <a class="nav-item nav-link" href="{{ url('comment_create') }}">{{ 'title.comment_create'|trans }}</a>
+                            <a class="nav-item nav-link" href="{{ url('comment_update', {'id':1}) }}">{{ 'title.comment_update'|trans }}</a>
                         </div>
                 </div>
+                {% endif %}
 
                 <div class="navbar-nav navbar-right ml-auto btn-toolbar">
                     {% if app.user %}
-                        <span class="navbar-text">Zalogowany jako: {{ app.user.username }}</span>
+                        <span class="navbar-text">{{ 'label.logged_as'|trans }} {{ app.user.username }}</span>
                         <button type="button" class="btn btn-light navbar-btn navbar-right ml-2">
-                            <a href="{{ path('user_edit') }}">Edytuj profil</a>
+                            <a href="{{ path('user_edit') }}">{{ 'label.edit_profile'|trans }}</a>
                         </button>
                         <button type="button" class="btn btn-light navbar-btn navbar-right ml-2">
-                            <a href="{{ path('app_logout') }}" class="nav-item">Wyloguj</a>
+                            <a href="{{ path('app_logout') }}" class="nav-item">{{ 'label.logout'|trans }}</a>
                         </button>
                     {% else %}
-                        <span class="navbar-text">Nie jesteś zalogowany </span>
+                        <span class="navbar-text">{{ 'label.not_logged'|trans }} </span>
                         <button type="button" class="btn btn-light navbar-btn navbar-right ml-2">
-                            <a href="{{ path('app_login') }}" class="nav-item">Zaloguj</a>
+                            <a href="{{ path('app_login') }}" class="nav-item">{{ 'label.login'|trans }}</a>
                         </button>
                     {% endif %}
                 </div>
@@ -72,25 +74,11 @@
         </div>
     </nav>
 
-
-
-
-    {% for msg in app.flashes('success') %}
-        <div class="alert alert-success">
-            {{ msg }}
-        </div>
-    {% endfor %}
-
-    {% for msg in app.flashes('danger') %}
-        <div class="alert alert-danger">
-            {{ msg }}
-        </div>
-    {% endfor %}
-
+        {% include 'default/_flash_messages.html.twig' %}
 
         {% block body %}
-
         {% endblock %}
+
 
         {% block javascripts %}
 

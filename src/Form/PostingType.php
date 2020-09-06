@@ -25,15 +25,14 @@ class PostingType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('date')
-            ->add('description')
-            ->add('tags')
-            ->add('img')
             ->add('title')
             ->add('category', EntityType::class, [
                 'class' => Category::class,
                 'choice_label' => 'name',
             ])
+            ->add('description')
+            ->add('tags')
+            ->add('img')
             ->add('save', SubmitType::class);
     }
 

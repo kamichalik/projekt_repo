@@ -1,17 +1,24 @@
 {% extends 'base.html.twig' %}
-
-
 {% block body %}
-<style>
 
-</style>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% include 'default/_form.html.twig' with {
+                page_title: 'title_category_create',
+                attr: {
+                    method: 'POST',
+                    action: url('category_create')
+                },
+                form: form,
+                submit_label: 'action.save'|trans,
+                back_to_list_path: 'categories',
+            } %}
 
-<div class="form-wrapper">
-    <h1 class="page-title">Utwórz kategorię</h1>
-        <div class="content-wrapper">
-            {{ form(categoryForm) }}
         </div>
-
+    </div>
 </div>
+
+
 
 {% endblock %}

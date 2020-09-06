@@ -12,7 +12,7 @@
             {% for message in messages %}
                 {%  include 'default/_single_flash_message.html.twig' with {
                     type: type,
-                    message: message
+                    message: message|trans
                 } %}
             {% endfor %}
         {% endfor %}

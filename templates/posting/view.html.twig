@@ -1,41 +1,56 @@
 {% extends 'base.html.twig' %}
 
-
 {% block body %}
-<style>
-    .post-wrapper {margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif;}
 
-
-</style>
-
-<div class="content-wrapper container">
-    <h1 class="page-title">{{ post.title }}</h1>
-
-    <div class="post-content">
-        {{ include ("posting/_tags.html.twig", {
-            'post':post
-            })
-        }}
-        <p>
-            {{ post.description }}
-        </p>
-    </div>
-    <div class="img-wrapper">
-        {{ include ("posting/_img.html.twig", {
-            'post':post
-            })
-        }}
-    </div>
-    <div class="comments-wrapper">
-        {% for comment in post.comments %}
-        <div class="comment-content">
-            <span>{{ comment.date|date ('Y-m-d h:i') }}</span>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h1 class="mt-5">{{ post.title }}</h1>
+            <div class="row my-4">
+                <div class="col">
+                {{ post.date ? post.date|date('Y-m-d H:i') : '' }}
+                </div>
+            </div>
+            <div class="row my-4">
+                <div class="col">{{ 'label.category'|trans }}:
+                    {{ post.category.name }}
+                </div>
+                <div class="col">{{ 'label.tags'|trans }}:
+                    {{ include ("posting/_tags.html.twig", {
+                        'post':post
+                        })
+                    }}
+                </div>
+            </div>
             <p>
-                {{ comment.content }}
+                {{ post.description }}
             </p>
         </div>
-
-        {% endfor %}
+        <div class="row">
+            {{ include ("posting/_img.html.twig", {
+                'post':post
+                })
+            }}
+        </div>
+    </div>
+    <div class="row mt-5">
+        <div class="col-md-8 offset-md-2">
+            {% if post.comments is not empty %}
+                <h4>{{ 'label.comments'|trans }}:</h4>
+                {% for comment in post.comments %}
+                    <div class="row py-3">
+                        <div class="col">
+                            {{ comment.date|date ('Y-m-d h:i') }}
+                        </div>
+                        <div class="col">
+                            {{ comment.content }}
+                        </div>
+                        </div>
+                {% endfor %}
+            {% else %}
+            <h4>{{ 'no_comments'|trans }}</h4>
+            {% endif %}
+        </div>
     </div>
 
 </div>

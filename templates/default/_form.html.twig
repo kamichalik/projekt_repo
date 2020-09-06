@@ -1,0 +1,20 @@
+{% block body %}
+
+    <h1>
+        {% if page_title_param is defined %}{{ page_title|trans(page_title_param) }}{% else %}{{ page_title|trans }}{% endif %}
+    </h1>
+
+    {{ form_start(form, { method: attr.method|default('POST'), action: attr.action }) }}
+    {% if false == form.vars.valid %}
+        {% include 'default/_single_flash_message.html.twig' with {
+            type: 'danger',
+            message: 'message.form_error'|trans,
+        }%}
+    {% endif %}
+    {{ form_widget(form) }}
+    <div class="form-group row float-sm-right">
+        <input type="submit" value="{{ submit_label|default('action.save'|trans) }}" class="btn btn-primary" />
+    </div>
+    {{ form_end(form) }}
+
+{% endblock %}

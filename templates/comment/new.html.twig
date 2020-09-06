@@ -1,13 +1,22 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}New Comment{% endblock %}
-
 {% block body %}
-    <h1 class="page-title">Create new Comment</h1>
 
-    <div class="content-wrapper">
-        {{ include('comment/_form.html.twig') }}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% include 'default/_form.html.twig' with {
+                page_title: 'title.comment_create',
+                attr: {
+                    method: 'POST',
+                    action: url('comment_create')
+                },
+                form: form,
+                submit_label: 'action.save'|trans,
+                back_to_list_path: 'comments',
+            } %}
+        </div>
     </div>
+</div>
 
-    <a href="{{ path('comments') }}">back to list</a>
 {% endblock %}

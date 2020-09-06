@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class UserController
@@ -20,19 +21,18 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 class UserController extends AbstractController
 {
     /**
-     * Edit user.
+     * Edit user data.
      *
      * @param Request                      $request
      * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param TranslatorInterface          $translator
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response|\Symfony\Component\HttpFoundation\Response
      *
-     * @Route("/user/edit", name="user_edit", methods={"GET","PUT"})
+     * @Route("/user/edit", name="user_edit")
      */
-    public function userEdit(Request $request, UserPasswordEncoderInterface $passwordEncoder):Response
+    public function userEdit(Request $request, UserPasswordEncoderInterface $passwordEncoder, TranslatorInterface $translator)
     {
-        $error = '';
-
         $emailForm = $this->createForm(ProfileType::class, ['email' => $this->getUser()->getUsername()], ['method' => 'PUT']);
         $passwordForm = $this->createForm(ChangePasswordType::class);
 
@@ -46,7 +46,7 @@ class UserController extends AbstractController
             $user->setEmail($emailForm->getData()['email']);
             $this->persist($user);
 
-            $this->addFlash('success', 'Zmieniono email użytkownika');
+            $this->addFlash('success', $translator->trans('account.updated'));
         }
 
         if ($passwordForm->isSubmitted() && $passwordForm->isValid()) {
@@ -54,19 +54,20 @@ class UserController extends AbstractController
             $newPassword = $data['password'];
 
             if (!$passwordEncoder->isPasswordValid($this->getUser(), $data['currentPassword'])) {
-                $error = 'Nieprawidłowe hasło';
+                $this->addFlash('danger', $translator->trans('log.incorrect_pw'));
             } elseif ($newPassword !== $data['repeatPassword']) {
-                $error = 'Podane hasła nie są takie same';
+                $this->addFlash('danger', $translator->trans('log.not_match'));
             } else {
                 $user->setPassword($passwordEncoder->encodePassword($this->getUser(), $newPassword));
                 $this->persist($user);
+
+                $this->addFlash('success', $translator->trans('account.updated'));
             }
         }
 
         return $this->render('security/_profileform.html.twig', [
             'profileForm' => $emailForm->createView(),
             'changePasswordForm' => $passwordForm->createView(),
-            'passwordError' => $error,
         ]);
     }
 

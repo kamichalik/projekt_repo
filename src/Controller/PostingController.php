@@ -7,17 +7,13 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\Posting;
-use App\Entity\User;
-use App\Form\ChangePasswordType;
 use App\Form\PostingType;
-use App\Form\ProfileType;
 use App\Repository\CategoryRepository;
 use http\Env\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -38,7 +34,7 @@ class PostingController extends AbstractController
     {
         $limit = 10;
         $postings = $this->getRepository()->findBy(
-            ['is_active' => 1],
+            ['isActive' => 1],
             ['id' => 'desc'],
             $limit,
             ($pageNumber - 1) * $limit
@@ -70,9 +66,9 @@ class PostingController extends AbstractController
      *
      * @return Response|\Symfony\Component\HttpFoundation\Response
      *
-     * @Route("/posting/{id}", name="posting")
+     * @Route("/posting/{id}", name="posting", requirements={"id"="\d+"})
      */
-    public function show(int $id):Response
+    public function show($id)
     {
         $posting = $this->getPosting($id);
 
@@ -82,17 +78,50 @@ class PostingController extends AbstractController
     }
 
     /**
+     * Create action.
+     *
+     * @param Request $request
+     *
+     * @return Response|RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     *
+     * @throws \Exception
+     *
+     * @Route("/posting/create", name="posting_create")
+     */
+    public function create(Request $request)
+    {
+        $posting = new Posting();
+        $form = $this->createForm(PostingType::class, $posting);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $posting = $form->getData();
+            $posting->setIsActive(0);
+            $posting->setDate(new \DateTime('now'));
+            $this->persist($posting);
+
+            $this->addFlash('success', 'message.post_created_successfully');
+
+            return $this->redirect('/postings');
+        }
+        $formView = $form->createView();
+
+        return $this->render('posting/create.html.twig', [
+            'form' => $formView,
+        ]);
+    }
+
+    /**
      * Update action.
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request    HTTP request
-     * @param TranslatorInterface                       $translator Translator
-     * @param int                                       $id         Posting id
+     * @param \Symfony\Component\HttpFoundation\Request $request HTTP request
+     * @param int                                       $id      Posting id
      *
      * @return Response|\Symfony\Component\HttpFoundation\Response
      *
      * @Route("/posting/{id}/update", name="posting_update", methods={"GET","PUT"})
      */
-    public function update(Request $request, TranslatorInterface $translator, int $id)
+    public function update(Request $request, int $id):Response
     {
         $posting = $this->getPosting($id);
         $form = $this->createForm(PostingType::class, $posting, ['method' => 'PUT']);
@@ -101,47 +130,44 @@ class PostingController extends AbstractController
             $posting = $form->getData();
             $this->persist($posting);
 
-            $this->addFlash('success', $translator->trans('posting.created'));
+            $this->addFlash('success', 'message.post_updated_successfully');
 
-            return $this->redirect('postings');
+            return $this->redirect('/postings');
         }
         $formView = $form->createView();
 
         return $this->render('posting/update.html.twig', [
             'id' => $id,
-            'postingForm' => $formView,
+            'form' => $formView,
         ]);
     }
 
     /**
-     * Create action.
+     * Delete action.
      *
      * @param Request $request
+     * @param Posting $posting
      *
-     * @return Response
+     * @return Response|RedirectResponse
      *
-     * @Route("/posting/create", name="posting_create")
+     * @Route("/posting/{id}/delete", name="posting_delete", methods={"DELETE"})
      */
-    public function create(Request $request):Response
+    public function delete(Request $request, Posting $posting)
     {
-        $posting = new Posting();
-        $form = $this->createForm(PostingType::class, $posting);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $posting = $form->getData();
-            $posting->setIsActive(0);
-            $this->persist($posting);
+        if ($this->isCsrfTokenValid('delete'.$posting->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($posting);
+            $entityManager->flush();
 
-            return $this->redirect('postings');
+            $this->addFlash('success', 'message.post_deleted_successfully');
         }
-        $formView = $form->createView();
 
-        return $this->render('posting/create.html.twig', [
-            'postingForm' => $formView,
-        ]);
+        return $this->redirectToRoute('postings_admin');
     }
 
     /**
+     * Activate posting.
+     *
      * @param int $id
      *
      * @return RedirectResponse
@@ -153,6 +179,28 @@ class PostingController extends AbstractController
         $posting = $this->getPosting($id);
         $posting->setIsActive(1);
         $this->persist($posting);
+
+        $this->addFlash('success', 'message.post_activated');
+
+        return new RedirectResponse('/all');
+    }
+
+    /**
+     * Dectivate posting.
+     *
+     * @param int $id
+     *
+     * @return RedirectResponse
+     *
+     * @Route("/{id}/deactivate", name="deactivate")
+     */
+    public function deactivate(int $id): RedirectResponse
+    {
+        $posting = $this->getPosting($id);
+        $posting->setIsActive(0);
+        $this->persist($posting);
+
+        $this->addFlash('warning', 'message.post_deactivated');
 
         return new RedirectResponse('/all');
     }
@@ -168,7 +216,7 @@ class PostingController extends AbstractController
      */
     public function categoryPostings(int $id)
     {
-        $postings = $this->getRepository()->findBy(['is_active' => 1, 'category' => $id], ['id' => 'desc']);
+        $postings = $this->getRepository()->findBy(['isActive' => 1, 'category' => $id], ['id' => 'desc']);
 
         /** @var CategoryRepository $categoryRepository */
         $categoryRepository = $this->getDoctrine()->getRepository(Category::class);
@@ -187,13 +235,13 @@ class PostingController extends AbstractController
     }
 
     /**
-     * Posting getter
+     * Posting getter.
      *
      * @param int $id
      *
-     * @return Posting
+     * @return Posting|object
      */
-    private function getPosting(int $id): Posting
+    private function getPosting($id)
     {
         $doctrineRepo = $this->getRepository();
         $posting = $doctrineRepo->find($id);

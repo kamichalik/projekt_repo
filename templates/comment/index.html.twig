@@ -3,35 +3,36 @@
 {% block title %}Comment index{% endblock %}
 
 {% block body %}
-    <h1>Comment index</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Content</th>
-                <th>Date</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for comment in comments %}
-            <tr>
-                <td>{{ comment.id }}</td>
-                <td>{{ comment.content }}</td>
-                <td>{{ comment.date ? comment.date|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('comment_view', {'id': comment.id}) }}">show</a>
-                    <a href="{{ path('comment_edit', {'id': comment.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('comment_new') }}">Create new</a>
+<div class="container">
+    <h1 class="text-center py-4">{{ 'title.comments'|trans }}</h1>
+    <div>
+        <table class="table">
+            <thead>
+                <th>{{ 'label.id'|trans }}</th>
+                <th>{{ 'label.content'|trans }}</th>
+                <th>{{ 'label.date'|trans }}</th>
+                <th>{{ 'label.actions'|trans }}</th>
+            </thead>
+            <tbody>
+            {% for comment in comments %}
+                <tr>
+                    <td>{{ comment.id }}</td>
+                    <td>{{ comment.content }}</td>
+                    <td>{{ comment.date ? comment.date|date('Y-m-d H:i:s') : '' }}</td>
+                    <td>
+                        <a href="{{ path('comment_view', {'id': comment.id}) }}" class="btn btn-primary">{{ 'action.view'|trans }}</a>
+                        <a href="{{ path('comment_update', {'id': comment.id}) }}"class="btn btn-warning ml-2">{{ 'action.edit'|trans }}</a>
+                        <a class="btn btn-danger btn-sm ml-2">{{ include('comment/_delete_form.html.twig') }} </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">No records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}
