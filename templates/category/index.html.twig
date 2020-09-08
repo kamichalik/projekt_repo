@@ -1,55 +1,47 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Kategorie{% endblock %}
+{% block title %}{{ 'title.categories'|trans }}{% endblock %}
 
 {% block body %}
 
-<div class="container">
+<div class="container col-6">
     <h1 class="text-center py-4">{{ 'title.categories'|trans }}</h1>
+
+    {% if pagination is defined and pagination.items|length %}
 
     <div>
         <table class="table">
             <thead>
-                <th>{{ 'label.id'|trans }}</th>
-                <th>{{ 'label.category_title'|trans }}</th>
-                <th>{{ 'label.actions'|trans }}</th>
+                <th style="width: 25%">{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'category.id') }}</th>
+                <th style="width: 25%">{{ knp_pagination_sortable(pagination, 'label.category_title'|trans, 'category.title') }}</th>
+                <th style="width: 50%">{{ 'label.actions'|trans }}</th>
             </thead>
             <tbody>
-                {% for category in categories %}
+                {% for category in pagination.items %}
                     <tr>
                         <td>{{ category.id }}</td>
                         <td>{{ category.name }}</td>
-                        <td>{{ include('category/_delete_form.html.twig', {
-                                'category':category
-                            })
-                            }}
+                        <td>
+                            <a href="{{ path('postings_in_category', {'id': category.id}) }}"class="btn btn-primary ml-2">{{ 'action.view'|trans }}</a>
+                            <a href="{{ path('category_update', {'id': category.id}) }}"class="btn btn-warning ml-2">{{ 'action.update'|trans }}</a>
+                            <a href="{{ path('category_delete', {'id': category.id}) }}"class="btn btn-danger ml-2">{{ 'action.delete'|trans }}</a>
                         </td>
-
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-{#    <div class="row">#}
-{#        <div class="category-wrapper col-md-12">#}
-{#        {% for category in categories %}#}
-{#            {% set className="" %}#}
-{#                <h4 class="category-item {{ className }}" id="category-list"><a href="{{  url ("postings_in_category", {'id':category.id}) }}">{{ category.name }}</a>#}
-{#                </h4>#}
 
-{#        {% endfor %}#}
-{#        </div>#}
-{#    </div>#}
-
-    <div class="row">
-        <div class="pagination">
-            {{ include ("/_pagination.html.twig", {
-                'pageNumber':pageNumber,
-                'path':'categories'
-            })
-            }}
-        </div>
+    <div class="navigation text-center">
+        {{ knp_pagination_render(pagination) }}
     </div>
+
+    {% else %}
+        <p>
+            {{ 'message.no_records'|trans }}
+        </p>
+    {% endif %}
+
 
 </div>
 {% endblock %}

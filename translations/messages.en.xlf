@@ -86,13 +86,17 @@
                 <source>title.postings</source>
                 <target>Postings</target>
             </trans-unit>
-            <trans-unit id="title.categories">
-                <source>title.categories</source>
-                <target>Categories</target>
+            <trans-unit id="title.posting">
+                <source>title.posting</source>
+                <target>Posting</target>
             </trans-unit>
-            <trans-unit id="title.comments">
-                <source>title.comments</source>
-                <target>Comments</target>
+            <trans-unit id="title.category">
+                <source>title.category</source>
+                <target>Category</target>
+            </trans-unit>
+            <trans-unit id="title.comment">
+                <source>title.comment</source>
+                <target>Comment</target>
             </trans-unit>
             <trans-unit id="title.posting_create">
                 <source>title.posting_create</source>
@@ -101,6 +105,10 @@
             <trans-unit id="title.posting_update">
                 <source>title.posting_update</source>
                 <target>Update posting</target>
+            </trans-unit>
+            <trans-unit id="title.posting_delete">
+                <source>title.posting_delete</source>
+                <target>Delete posting</target>
             </trans-unit>
             <trans-unit id="title.category_create">
                 <source>title.category_create</source>
@@ -117,6 +125,18 @@
             <trans-unit id="title.comment_update">
                 <source>title.comment_update</source>
                 <target>Update comment</target>
+            </trans-unit>
+            <trans-unit id="title_category_create">
+                <source>title_category_create</source>
+                <target>Create category</target>
+            </trans-unit>
+            <trans-unit id="title.post_create">
+                <source>title.post_create</source>
+                <target>Create post</target>
+            </trans-unit>
+            <trans-unit id="title.post_update">
+                <source>title.post_update</source>
+                <target>Update post</target>
             </trans-unit>
             <trans-unit id="label.login">
                 <source>label.login</source>
@@ -145,6 +165,10 @@
             <trans-unit id="label.post_title">
                 <source>label.post_title</source>
                 <target>Title</target>
+            </trans-unit>
+            <trans-unit id="label.posting">
+                <source>label.posting</source>
+                <target>Posting</target>
             </trans-unit>
             <trans-unit id="label.category_title">
                 <source>label.category_title</source>
@@ -186,9 +210,17 @@
                 <source>label.date</source>
                 <target>Date</target>
             </trans-unit>
+            <trans-unit id="label.user">
+                <source>label.user</source>
+                <target>User</target>
+            </trans-unit>
             <trans-unit id="label.email">
                 <source>label.email</source>
                 <target>Email</target>
+            </trans-unit>
+            <trans-unit id="label.name">
+                <source>label.name</source>
+                <target>Name</target>
             </trans-unit>
             <trans-unit id="label.password">
                 <source>label.password</source>
@@ -202,6 +234,10 @@
                 <source>label.repeat_password</source>
                 <target>Repeat password</target>
             </trans-unit>
+            <trans-unit id="label.posting_title">
+                <source>label.posting_title</source>
+                <target>Title</target>
+            </trans-unit>
             <trans-unit id="action.activate">
                 <source>action.activate</source>
                 <target>Activate</target>
@@ -214,8 +250,8 @@
                 <source>action.view</source>
                 <target>View</target>
             </trans-unit>
-            <trans-unit id="action.edit">
-                <source>action.edit</source>
+            <trans-unit id="action.update">
+                <source>action.update</source>
                 <target>Edit</target>
             </trans-unit>
             <trans-unit id="action.delete">
@@ -226,8 +262,8 @@
                 <source>action.login</source>
                 <target>Log in</target>
             </trans-unit>
-            <trans-unit id="no_records">
-                <source>no_records</source>
+            <trans-unit id="message.no_records">
+                <source>message.no_records</source>
                 <target>No records found</target>
             </trans-unit>
             <trans-unit id="no_comments">
@@ -237,6 +273,14 @@
             <trans-unit id="confirm_delete">
                 <source>confirm_delete</source>
                 <target>Are you sure you want to delete this item?</target>
+            </trans-unit>
+            <trans-unit id="action.back_to_list">
+                <source>action.back_to_list</source>
+                <target>Back to list</target>
+            </trans-unit>
+            <trans-unit id="label.leave_comment">
+                <source>label.leave_comment</source>
+                <target>Leave a comment</target>
             </trans-unit>
 
 

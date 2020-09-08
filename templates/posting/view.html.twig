@@ -8,7 +8,7 @@
             <h1 class="mt-5">{{ post.title }}</h1>
             <div class="row my-4">
                 <div class="col">
-                {{ post.date ? post.date|date('Y-m-d H:i') : '' }}
+                {{ post.date|format_date('long') }}
                 </div>
             </div>
             <div class="row my-4">
@@ -35,17 +35,22 @@
     </div>
     <div class="row mt-5">
         <div class="col-md-8 offset-md-2">
+            <button type="button" class="btn btn-primary mb-4">
+                <a class="text-white" href="{{ url ('comment_create') }}">{{ 'label.leave_comment'|trans }}</a>
+            </button>
             {% if post.comments is not empty %}
-                <h4>{{ 'label.comments'|trans }}:</h4>
+                <h3 class="mb-5">{{ 'label.comments'|trans }}:</h3>
                 {% for comment in post.comments %}
-                    <div class="row py-3">
-                        <div class="col">
-                            {{ comment.date|date ('Y-m-d h:i') }}
-                        </div>
-                        <div class="col">
+                    <div class="media border-top border-bottom">
+                        <div class="media-body m-3">
+                            <h5 class="font-weight-bold">{{ comment.user }}</h5>
+                            <h6>{{ comment.date|format_date('long') }}</h6>
                             {{ comment.content }}
                         </div>
-                        </div>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a class="btn btn-danger align-self-center"  href="{{ path('comment_delete', {'id': comment.id}) }}">{{ 'action.delete'|trans }}</a>
+                        {% endif %}
+                    </div>
                 {% endfor %}
             {% else %}
             <h4>{{ 'no_comments'|trans }}</h4>

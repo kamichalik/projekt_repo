@@ -8,13 +8,13 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Entity\Posting;
 use App\Form\PostingType;
-use App\Repository\CategoryRepository;
+use App\Repository\PostingRepository;
+use Doctrine\ORM\ORMException;
 use http\Env\Response;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class PostingController
@@ -24,39 +24,61 @@ class PostingController extends AbstractController
     /**
      * Index action.
      *
-     * @param int $pageNumber
+     * @param Request            $request
+     * @param PostingRepository  $postingRepository
+     * @param PaginatorInterface $paginator
      *
-     * @return Response|\Symfony\Component\HttpFoundation\Response
+     * @return \Symfony\Component\HttpFoundation\Response
      *
-     * @Route("/postings/{pageNumber}", name="postings", defaults={"pageNumber"=1})
+     * @Route("/", name="postings")
      */
-    public function index(int $pageNumber)
+    public function index(Request $request, PostingRepository $postingRepository, PaginatorInterface $paginator)
     {
-        $limit = 10;
+        $pagination = $paginator->paginate(
+            $postingRepository->queryAll(),
+            $request->query->getInt('page', 1),
+            PostingRepository::PAGINATOR_ITEMS_PER_PAGE
+        );
+
         $postings = $this->getRepository()->findBy(
             ['isActive' => 1],
             ['id' => 'desc'],
-            $limit,
-            ($pageNumber - 1) * $limit
+            ['pagination' => $pagination]
         );
 
-        return $this->renderPostings($postings, $pageNumber, $currentCategory = null);
+        return $this->renderPostings($postings, $currentCategory = null, $pagination);
     }
 
     /**
      * Index action admin view.
      *
+     * @param Request            $request
+     * @param PostingRepository  $postingRepository
+     * @param PaginatorInterface $paginator
+     *
      * @return Response|\Symfony\Component\HttpFoundation\Response
      *
-     * @Route("/all", name="postings_admin")
+     * @Route("/postings", name="postings_admin")
      */
-    public function indexAdmin()
+    public function indexAdmin(Request $request, PostingRepository $postingRepository, PaginatorInterface $paginator)
     {
-        $postings = $this->getRepository()->findBy([], ['id' => 'desc']);
+//        $postings = $this->getRepository()->findBy([], ['id' => 'desc']);
+//
+//        return $this->render('posting/indexAdmin.html.twig', [
+//            'postings' => $postings,
+//        ]);
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        return $this->render('posting/indexAdmin.html.twig', [
-            'postings' => $postings,
-        ]);
+        $pagination = $paginator->paginate(
+            $postingRepository->queryAll(),
+            $request->query->getInt('page', 1),
+            PostingRepository::PAGINATOR_ITEMS_PER_PAGE
+        );
+
+        return $this->render(
+            'posting/indexAdmin.html.twig',
+            ['pagination' => $pagination]
+        );
     }
 
     /**
@@ -116,53 +138,75 @@ class PostingController extends AbstractController
      *
      * @param \Symfony\Component\HttpFoundation\Request $request HTTP request
      * @param int                                       $id      Posting id
+     * @param Posting                                   $posting
+     * @param PostingRepository                         $repository
      *
      * @return Response|\Symfony\Component\HttpFoundation\Response
      *
-     * @Route("/posting/{id}/update", name="posting_update", methods={"GET","PUT"})
+     * @Route("/posting/{id}/update", name="posting_update", requirements={"id": "[1-9]\d*"}, methods={"GET","PUT"})
      */
-    public function update(Request $request, int $id):Response
+    public function update(Request $request, Posting $posting, PostingRepository $repository, int $id)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $posting = $this->getPosting($id);
         $form = $this->createForm(PostingType::class, $posting, ['method' => 'PUT']);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $posting = $form->getData();
-            $this->persist($posting);
+            $repository->save($posting);
 
             $this->addFlash('success', 'message.post_updated_successfully');
 
             return $this->redirect('/postings');
         }
-        $formView = $form->createView();
 
         return $this->render('posting/update.html.twig', [
             'id' => $id,
-            'form' => $formView,
+            'form' => $form->createView(),
+            'posting' => $posting,
         ]);
     }
 
     /**
      * Delete action.
      *
-     * @param Request $request
-     * @param Posting $posting
+     * @param Request           $request
+     * @param Posting           $posting
+     * @param PostingRepository $repository
      *
-     * @return Response|RedirectResponse
+     * @throws ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
      *
-     * @Route("/posting/{id}/delete", name="posting_delete", methods={"DELETE"})
+     * @return Response|RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     *
+     * @Route("/posting/{id}/delete", name="posting_delete", requirements={"id": "[1-9]\d*"}, methods={"GET", "DELETE"})
      */
-    public function delete(Request $request, Posting $posting)
+    public function delete(Request $request, Posting $posting, PostingRepository $repository)
     {
-        if ($this->isCsrfTokenValid('delete'.$posting->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($posting);
-            $entityManager->flush();
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-            $this->addFlash('success', 'message.post_deleted_successfully');
+        $form = $this->createForm(PostingType::class, $posting, ['method' => 'DELETE']);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('DELETE') && !$form->isSubmitted()) {
+            $form->submit($request->request->get($form->getName()));
         }
 
-        return $this->redirectToRoute('postings_admin');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $repository->delete($posting);
+
+            $this->addFlash('success', 'message.post_deleted_successfully');
+
+            return $this->redirectToRoute('postings_admin');
+        }
+
+        return $this->render(
+            'posting/delete.html.twig',
+            [
+                'form' => $form->createView(),
+                'posting' => $posting,
+            ]
+        );
     }
 
     /**
@@ -182,7 +226,7 @@ class PostingController extends AbstractController
 
         $this->addFlash('success', 'message.post_activated');
 
-        return new RedirectResponse('/all');
+        return new RedirectResponse('/postings');
     }
 
     /**
@@ -202,26 +246,37 @@ class PostingController extends AbstractController
 
         $this->addFlash('warning', 'message.post_deactivated');
 
-        return new RedirectResponse('/all');
+        return new RedirectResponse('/postings');
     }
 
     /**
      * View actions in category.
      *
-     * @param int $id
+     * @param Request            $request
+     * @param PostingRepository  $postingRepository
+     * @param PaginatorInterface $paginator
+     * @param int                $pageNumber
      *
      * @return Response|\Symfony\Component\HttpFoundation\Response
      *
      * @Route("/category/{id}/postings", name="postings_in_category")
      */
-    public function categoryPostings(int $id)
+    public function categoryPostings(Request $request, PostingRepository $postingRepository, PaginatorInterface $paginator, int $id)
     {
-        $postings = $this->getRepository()->findBy(['isActive' => 1, 'category' => $id], ['id' => 'desc']);
+        $pagination = $paginator->paginate(
+            $postingRepository->queryAll(),
+            $request->query->getInt('page', 1),
+            PostingRepository::PAGINATOR_ITEMS_PER_PAGE
+        );
 
-        /** @var CategoryRepository $categoryRepository */
+        $postings = $this->getRepository()->findBy(
+            ['isActive' => 1, 'category' => $id],
+            ['id' => 'desc']
+        );
+
         $categoryRepository = $this->getDoctrine()->getRepository(Category::class);
 
-        return $this->renderPostings($postings, 1, $categoryRepository->find($id));
+        return $this->renderPostings($postings, 1, $categoryRepository->find($id), $pagination);
     }
 
     /**
@@ -265,12 +320,11 @@ class PostingController extends AbstractController
      * Render postings.
      *
      * @param array         $postings
-     * @param int           $pageNumber
      * @param Category|null $currentCategory
      *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response|\Symfony\Component\HttpFoundation\Response
      */
-    private function renderPostings(array $postings, int $pageNumber, Category $currentCategory = null): \Symfony\Component\HttpFoundation\Response
+    private function renderPostings(array $postings, Category $currentCategory = null, $pagination)
     {
         $categories = $this->getDoctrine()->getRepository(Category::class)->findBy([], ['id' => 'desc']);
 
@@ -278,7 +332,7 @@ class PostingController extends AbstractController
             'postings' => $postings,
             'categories' => $categories,
             'currentCategory' => $currentCategory,
-            'pageNumber' => $pageNumber,
+            'pagination' => $pagination,
 
         ]);
     }

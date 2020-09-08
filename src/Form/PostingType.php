@@ -9,7 +9,7 @@ use App\Entity\Category;
 use App\Entity\Posting;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,24 +19,69 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class PostingType extends AbstractType
 {
     /**
+     * Builds the form.
+     *
      * @param FormBuilderInterface $builder
      * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title')
-            ->add('category', EntityType::class, [
-                'class' => Category::class,
-                'choice_label' => 'name',
-            ])
-            ->add('description')
-            ->add('tags')
-            ->add('img')
-            ->add('save', SubmitType::class);
+            ->add(
+            'title',
+            TextType::class,
+                [
+                    'label' => 'label.posting_title',
+                    'required' => true,
+                    'attr' => ['max_length' => 45],
+                ]
+            )
+
+            ->add(
+                'category',
+                EntityType::class,
+                [
+                    'class' => Category::class,
+                    'choice_label' => 'name',
+                    'label' => 'label.category',
+                    'required' => true,
+                ]
+            )
+
+            ->add(
+                'description',
+                TextType::class,
+                [
+                    'label' => 'label.description',
+                    'required' => true,
+                ]
+            )
+
+            ->add(
+                'tags',
+                TextType::class,
+                [
+                    'label' => 'label.tags',
+                    'required' => true,
+                    'attr' => ['max_length' => 255],
+                ]
+            )
+
+            ->add(
+                'img',
+
+//                [
+//
+//                'label' => 'label.img',
+//                'required' => true,
+//
+//                ]
+            );
     }
 
     /**
+     * Configures the options for this type.
+     *
      * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)

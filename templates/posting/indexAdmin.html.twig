@@ -6,62 +6,78 @@
 
 <div class="container">
     <h1 class="text-center py-4">{{ 'title.postings'|trans }}</h1>
-    <div>
-        <table class="table">
-            <thead>
-                <th>{{ 'label.id'|trans }}</th>
-                <th>{{ 'label.post_title'|trans }}</th>
-                <th>{{ 'label.is_active'|trans }}</th>
-                <th>{{ 'label.category'|trans }}</th>
-                <th>{{ 'label.tags'|trans }}</th>
-                <th>{{ 'label.description'|trans }}</th>
-                <th>{{ 'label.img'|trans }}</th>
-                <th>{{ 'label.comments'|trans }}</th>
-                <th>{{ 'label.actions'|trans }}</th>
-            </thead>
-            <tbody>
-                {% for post in postings %}
-                    {% if post.isActive ==1 %}
-                    <tr class="table-success">
+
+    {% if pagination is defined and pagination.items|length %}
+
+        <div>
+            <table class="table">
+                <thead>
+                    <th>{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'posting.id') }}</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'label.post_title'|trans, 'posting.title') }}</th>
+                    <th>{{ 'label.is_active'|trans }}</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'label.category'|trans, 'posting.category') }}</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'label.tags'|trans, 'posting.tags') }}</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'label.description'|trans, 'posting.description') }}</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'label.date'|trans, 'posting.date') }}</th>
+                    <th>{{ 'label.img'|trans }}</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'label.comments'|trans, 'posting.comments') }}</th>
+                    <th>{{ 'label.actions'|trans }}</th>
+                </thead>
+                <tbody>
+                    {% for post in pagination.items %}
+                        {% if post.isActive ==1 %}
+                        <tr class="table-secondary">
+                        {% else %}
+                        <tr class="table-active">
+                        {% endif %}
+                            <td>{{ post.id }}</td>
+                            <td>{{ post.title }}</td>
+                            <td>
+                                {% if post.isActive == 1 %}
+                                    {{ "✓" }}
+                                {% else %}
+                                    {{ "X" }}
+                                {% endif %}
+                            </td>
+                            <td>{{ post.category.name }}</td>
+                            <td>{{ post.tags }}</td>
+                            <td>{{ post.description}}</td>
+                            <td>{{ post.date|format_date('long') }}</td>
+                            <td>{{ include ("posting/_img.html.twig", {
+                                    'post':post,
+                                    'isSmall':50
+                                } )
+                                }}</td>
+                            <td>{{ post.comments|length}}</td>
+                            <td>
+                                <a href="{{ url('posting', {'id': post.id}) }}" class="btn btn-primary my-2">{{ 'action.view'|trans }}</a>
+                                {% if post.isActive == 0 %}
+                                    <a href="{{ url('activate', {'id': post.id}) }}" class="btn btn-success my-2">{{ 'action.activate'|trans }}</a>
+                                {% else %}
+                                    <a href="{{ url('deactivate', {'id': post.id}) }}" class="btn btn-warning my-2">{{ 'action.deactivate'|trans }}</a>
+                                {% endif %}
+                                <a href="{{ url('posting_update', {'id': post.id}) }}" class="btn btn-warning my-2">{{ 'action.update'|trans }}</a>
+                                <a href="{{ url('posting_delete', {'id': post.id}) }}" class="btn btn-danger my-2">{{ 'action.delete'|trans }}</a>
+                            </td>
+                        </tr>
                     {% else %}
-                    <tr class="table-danger">
-                    {% endif %}
-                        <td>{{ post.id }}</td>
-                        <td>{{ post.title }}</td>
-                        <td>
-                            {% if post.isActive == 1 %}
-                                {{ "✓" }}
-                            {% else %}
-                                {{ "X" }}
-                            {% endif %}
-                        </td>
-                        <td>{{ post.category.name }}</td>
-                        <td>{{ post.tags }}</td>
-                        <td>{{ post.description}}</td>
-                        <td>{{ include ("posting/_img.html.twig", {
-                                'post':post,
-                                'isSmall':50
-                            } )
-                            }}</td>
-                        <td>{{ post.comments|length}}</td>
-                        <td>
-                            {% if post.isActive == 0 %}
-                                <a href="{{ url('activate', {'id': post.id}) }}" class="btn btn-success my-2">{{ 'action.activate'|trans }}</a>
-                            {% else %}
-                                <a href="{{ url('deactivate', {'id': post.id}) }}" class="btn btn-warning my-2">{{ 'action.deactivate'|trans }}</a>
-                            {% endif %}
-                            <a class="btn btn-danger btn-sm ml-2">{{ include('posting/_delete_form.html.twig') }} </a>
-                        </td>
-                    </tr>
-                {% else %}
-                    <tr>
-                        <td colspan="4">{{ 'no_records'|trans }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        <tr>
+                            <td colspan="4">{{ 'no_records'|trans }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    <div class="navigation text-center">
+        {{ knp_pagination_render(pagination) }}
     </div>
 
+    {% else %}
+        <p>
+            {{ 'message.no_records'|trans }}
+        </p>
+    {% endif %}
 
 </div>
 {% endblock %}

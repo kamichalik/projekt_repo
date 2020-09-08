@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
-{% block title %}New Comment{% endblock %}
+{% block title %}{{ 'title.comment_create'|trans }}{% endblock %}
 {% block body %}
 
 <div class="container">
-    <div class="row">
+    <div class="row my-3">
         <div class="col-md-6 offset-md-3">
             {% include 'default/_form.html.twig' with {
                 page_title: 'title.comment_create',

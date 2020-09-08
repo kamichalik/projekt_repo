@@ -1,35 +1,39 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Comment{% endblock %}
+{% block title %}{{ 'title.comment'|trans }}{% endblock %}
 
 {% block body %}
 
 <div class="container">
-    <h1 class="text-center py-4">Comment</h1>
+    <h1 class="text-center py-4">{{ 'title.comment'|trans }}</h1>
     <div>
         <table class="table">
             <tbody>
                 <tr>
-                    <th>Id</th>
+                    <th>{{ 'label.id'|trans }}</th>
                     <td>{{ comment.id }}</td>
                 </tr>
                 <tr>
-                    <th>Date</th>
-                    <td>{{ comment.date ? comment.date|date('Y-m-d H:i:s') : '' }}</td>
+                    <th>{{ 'label.user'|trans }}</th>
+                    <td>{{ comment.user }}</td>
                 </tr>
                 <tr>
-                <tr>
-                    <th>On post titled</th>
-                    <td>{{ comment.posting.title }}</td>
-                </tr>
-                    <th>Content</th>
+                    <th>{{ 'label.content'|trans }}</th>
                     <td>{{ comment.content }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'label.date'|trans }}</th>
+                    <td>{{ comment.date|format_date('long') }}</td>
+                </tr>
+                <tr>
+                    <th>{{ 'label.posting'|trans }}</th>
+                    <td>{{ comment.posting.title }}</td>
                 </tr>
 
             </tbody>
         </table>
     </div>
 
-    <a href="{{ path('comments') }}" class="btn btn-primary">Back to list</a>
+    <a href="{{ path('comments') }}" class="btn btn-primary">{{ 'action.back_to_list'|trans }}</a>
 </div>
 {% endblock %}

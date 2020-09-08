@@ -8,11 +8,11 @@ namespace App\Controller;
 use App\Entity\Comment;
 use App\Form\CommentType;
 use App\Repository\CommentRepository;
+use Doctrine\ORM\ORMException;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class CommentController
@@ -22,17 +22,34 @@ class CommentController extends AbstractController
     /**
      * Index action.
      *
-     * @param CommentRepository $commentRepository
+     * @param CommentRepository  $commentRepository
+     * @param int                $pageNumber
+     * @param Request            $request
+     * @param PaginatorInterface $paginator
      *
      * @return Response
      *
-     * @Route("/comments", name="comments", methods={"GET"})
+     * @Route("/comments/{pageNumber}", name="comments", defaults={"pageNumber"=1}, methods={"GET"})
      */
-    public function index(CommentRepository $commentRepository): Response
+    public function index(Request $request, PaginatorInterface $paginator, CommentRepository $commentRepository, int $pageNumber): Response
     {
-        return $this->render('comment/index.html.twig', [
-            'comments' => $commentRepository->findAll(),
-        ]);
+//        return $this->render('comment/index.html.twig', [
+//            'comments' => $commentRepository->findAll(),
+//            'pageNumber' => $pageNumber,
+//        ]);
+
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $pagination = $paginator->paginate(
+            $commentRepository->queryAll(),
+            $request->query->getInt('page', 1),
+            CommentRepository::PAGINATOR_ITEMS_PER_PAGE
+        );
+
+        return $this->render(
+            'comment/index.html.twig',
+            ['pagination' => $pagination]
+        );
     }
 
     /**
@@ -86,52 +103,102 @@ class CommentController extends AbstractController
     /**
      * Update action.
      *
-     * @param Request $request
-     * @param Comment $comment
+     * @param Request           $request
+     * @param Comment           $comment
+     * @param CommentRepository $repository
+     * @param int               $id
      *
-     * @return Response
+     * @return \http\Env\Response|Response
      *
-     * @Route("/comment/{id}/update", name="comment_update", methods={"GET","PUT"})
+     * @Route("/comment/{id}/update", name="comment_update", requirements={"id": "[1-9]\d*"}, methods={"GET","PUT"})
      */
-    public function update(Request $request, Comment $comment): Response
+    public function update(Request $request, Comment $comment, CommentRepository $repository, int $id)
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $comment = $this->getComment($id);
         $form = $this->createForm(CommentType::class, $comment, ['method' => 'PUT']);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $repository->save($comment);
 
             $this->addFlash('success', 'message.comment_updated_successfully');
 
-            return $this->redirectToRoute('comments');
+            return $this->redirect('/comments');
         }
 
         return $this->render('comment/update.html.twig', [
-            'comment' => $comment,
+            'id' => $id,
             'form' => $form->createView(),
+            'comment' => $comment,
         ]);
     }
 
     /**
      * Delete action.
      *
-     * @param Request $request
-     * @param Comment $comment
+     * @param Request           $request
+     * @param Comment           $comment
+     * @param CommentRepository $repository
      *
-     * @return Response
+     * @return \http\Env\Response|Response
      *
-     * @Route("/comment/{id}", name="comment_delete", methods={"DELETE"})
+     * @throws ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     *
+     * @Route("/comment/{id}/delete", name="comment_delete", requirements={"id": "[1-9]\d*"}, methods={"GET", "DELETE"})
      */
-    public function delete(Request $request, Comment $comment): Response
+    public function delete(Request $request, Comment $comment, CommentRepository $repository)
     {
-        if ($this->isCsrfTokenValid('delete'.$comment->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($comment);
-            $entityManager->flush();
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-            $this->addFlash('success', 'message.comment_deleted_successfully');
+        $form = $this->createForm(CommentType::class, $comment, ['method' => 'DELETE']);
+        $form->handleRequest($request);
+
+        if ($request->isMethod('DELETE') && !$form->isSubmitted()) {
+            $form->submit($request->request->get($form->getName()));
         }
 
-        return $this->redirectToRoute('comments');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $repository->delete($comment);
+
+            $this->addFlash('success', 'message.comment_deleted_successfully');
+
+            return $this->redirectToRoute('comments');
+        }
+
+        return $this->render(
+            'comment/delete.html.twig',
+            [
+                'form' => $form->createView(),
+                'comment' => $comment,
+            ]
+        );
+    }
+
+    /**
+     * Repository getter.
+     *
+     * @return \Doctrine\Persistence\ObjectRepository
+     */
+    private function getRepository(): \Doctrine\Persistence\ObjectRepository
+    {
+        return $this->getDoctrine()->getRepository(Comment::class);
+    }
+
+    /**
+     * Comment getter.
+     *
+     * @param int $id
+     *
+     * @return Comment|object
+     */
+    private function getComment($id)
+    {
+        $doctrineRepo = $this->getRepository();
+        $comment = $doctrineRepo->find($id);
+
+        return $comment;
     }
 }

@@ -17,14 +17,40 @@ use Symfony\Component\Form\FormBuilderInterface;
 class LoginType extends AbstractType
 {
     /**
+     * Builds the form.
+     *
      * @param FormBuilderInterface $builder
      * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('email', EmailType::class)
-            ->add('password', PasswordType::class)
-            ->add('logIn', SubmitType::class);
+            ->add(
+                'email',
+                EmailType::class,
+                [
+                    'label' => 'label.email',
+                    'required' => true,
+                    'attr' => ['max_length' => 45],
+                ]
+            )
+
+            ->add(
+                'passsword',
+                PasswordType::class,
+                [
+                    'label' => 'label.password',
+                    'required' => true,
+                    'attr' => ['max_length' => 45],
+                ]
+            )
+
+            ->add(
+                'logIn',
+                SubmitType::class,
+                [
+                    'label' => 'action.login',
+                ]
+            );
     }
 }

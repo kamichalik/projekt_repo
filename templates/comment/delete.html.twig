@@ -1,19 +1,19 @@
 {% extends 'base.html.twig' %}
-{% block title %}{{ 'title.comment_update'|trans }}{% endblock %}
+{% block title %}{{ 'title.comment_delete'|trans }}{% endblock %}
 {% block body %}
 
     <div class="container">
         <div class="row my-3">
             <div class="col-md-6 offset-md-3">
                 {% include 'default/_form.html.twig' with {
-                    page_title: 'title.comment_update',
+                    page_title: 'title.comment_delete',
                     page_title_param: {'%id%': comment.id},
                     attr: {
-                        method: 'PUT',
-                        action: url('comment_update', {'id': comment.id})
+                        method: 'DELETE',
+                        action: url('comment_delete', {'id': comment.id})
                     },
                     form: form,
-                    submit_label: 'action.save'|trans,
+                    submit_label: 'action.delete'|trans,
                     back_to_list_path: 'comments',
                 } %}
             </div>
@@ -21,3 +21,6 @@
     </div>
 
 {% endblock %}
+
+
+

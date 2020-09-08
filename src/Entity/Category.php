@@ -5,10 +5,8 @@
 
 namespace App\Entity;
 
-use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=CategoryRepository::class)
@@ -16,6 +14,10 @@ use Doctrine\ORM\Mapping as ORM;
 class Category
 {
     /**
+     * Primary key.
+     *
+     * @var int
+     *
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
@@ -23,9 +25,25 @@ class Category
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * Name.
+     *
+     * @var string
+     *
+     * @ORM\Column(
+     *     type="string",
+     *     length=255
+     *     )
+     *
+     *
      */
     private $name;
+
+//@Assert\Type(type="string")
+//* @Assert\NotBlank
+//* @Assert\Length(
+//*     min="3",
+//*     max="255",
+//*     )
 
     /**
      * @ORM\OneToMany(targetEntity=Posting::class, mappedBy="category")
@@ -41,6 +59,8 @@ class Category
     }
 
     /**
+     * Getter for id.
+     *
      * @return int|null
      */
     public function getId(): ?int
@@ -49,6 +69,8 @@ class Category
     }
 
     /**
+     * Getter for name.
+     *
      * @return string|null
      */
     public function getName(): ?string
@@ -57,6 +79,8 @@ class Category
     }
 
     /**
+     * Setter for name.
+     *
      * @param string $name
      *
      * @return $this
@@ -69,6 +93,8 @@ class Category
     }
 
     /**
+     * Getter for postings.
+     *
      * @return Collection|Posting[]
      */
     public function getPostings(): Collection
@@ -77,6 +103,8 @@ class Category
     }
 
     /**
+     * Add posting.
+     *
      * @param Posting $posting
      *
      * @return $this
@@ -92,6 +120,8 @@ class Category
     }
 
     /**
+     * Remove posting.
+     *
      * @param Posting $posting
      *
      * @return $this

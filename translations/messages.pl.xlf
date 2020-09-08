@@ -94,6 +94,18 @@
                 <source>title.comments</source>
                 <target>Komentarze</target>
             </trans-unit>
+            <trans-unit id="title.posting">
+                <source>title.posting</source>
+                <target>Ogłoszenie</target>
+            </trans-unit>
+            <trans-unit id="title.category">
+                <source>title.category</source>
+                <target>Kategoria</target>
+            </trans-unit>
+            <trans-unit id="title.comment">
+                <source>title.comment</source>
+                <target>Komentarz</target>
+            </trans-unit>
             <trans-unit id="title.posting_create">
                 <source>title.posting_create</source>
                 <target>Utwórz ogłoszenie</target>
@@ -101,6 +113,10 @@
             <trans-unit id="title.posting_update">
                 <source>title.posting_update</source>
                 <target>Edytuj ogłoszenie</target>
+            </trans-unit>
+            <trans-unit id="title.posting_delete">
+                <source>title.posting_delete</source>
+                <target>Usuń ogłoszenie</target>
             </trans-unit>
             <trans-unit id="title.category_create">
                 <source>title.category_create</source>
@@ -117,6 +133,18 @@
             <trans-unit id="title.comment_update">
                 <source>title.comment_update</source>
                 <target>Edytuj komentarz</target>
+            </trans-unit>
+            <trans-unit id="title_category_create">
+                <source>title_category_create</source>
+                <target>Utwórz kategorię</target>
+            </trans-unit>
+            <trans-unit id="title.post_create">
+                <source>title.post_create</source>
+                <target>Utwórz ogłoszenie</target>
+            </trans-unit>
+            <trans-unit id="title.post_update">
+                <source>title.post_update</source>
+                <target>Edytuj ogłoszenie</target>
             </trans-unit>
             <trans-unit id="label.login">
                 <source>label.login</source>
@@ -145,6 +173,10 @@
             <trans-unit id="label.post_title">
                 <source>label.post_title</source>
                 <target>Tytuł</target>
+            </trans-unit>
+            <trans-unit id="label.posting">
+                <source>label.posting</source>
+                <target>Ogłoszenie</target>
             </trans-unit>
             <trans-unit id="label.category_title">
                 <source>label.category_title</source>
@@ -186,9 +218,17 @@
                 <source>label.date</source>
                 <target>Data</target>
             </trans-unit>
+            <trans-unit id="label.user">
+                <source>label.user</source>
+                <target>Użytkownik</target>
+            </trans-unit>
             <trans-unit id="label.email">
                 <source>label.email</source>
                 <target>Email</target>
+            </trans-unit>
+            <trans-unit id="label.name">
+                <source>label.name</source>
+                <target>Nazwa</target>
             </trans-unit>
             <trans-unit id="label.password">
                 <source>label.password</source>
@@ -202,6 +242,10 @@
                 <source>label.repeat_password</source>
                 <target>Powtórz hasło</target>
             </trans-unit>
+            <trans-unit id="label.posting_title">
+                <source>label.posting_title</source>
+                <target>Tytuł</target>
+            </trans-unit>
             <trans-unit id="action.activate">
                 <source>action.activate</source>
                 <target>Aktywuj</target>
@@ -214,8 +258,8 @@
                 <source>action.view</source>
                 <target>Zobacz</target>
             </trans-unit>
-            <trans-unit id="action.edit">
-                <source>action.edit</source>
+            <trans-unit id="action.update">
+                <source>action.update</source>
                 <target>Edytuj</target>
             </trans-unit>
             <trans-unit id="action.delete">
@@ -226,8 +270,12 @@
                 <source>action.login</source>
                 <target>Zaloguj</target>
             </trans-unit>
-            <trans-unit id="no_records">
-                <source>no_records</source>
+            <trans-unit id="action.back_to_list">
+                <source>action.back_to_list</source>
+                <target>Powrót do listy</target>
+            </trans-unit>
+            <trans-unit id="message.no_records">
+                <source>message.no_records</source>
                 <target>Brak rekordów</target>
             </trans-unit>
             <trans-unit id="no_comments">
@@ -238,6 +286,12 @@
                 <source>confirm_delete</source>
                 <target>Czy na pewno chcesz usunąć tę pozycję?</target>
             </trans-unit>
+            <trans-unit id="label.leave_comment">
+                <source>label.leave_comment</source>
+                <target>Zostaw komentarz</target>
+            </trans-unit>
+
+
 
 
 

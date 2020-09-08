@@ -5,11 +5,9 @@
 
 namespace App\Entity;
 
-use App\Repository\PostingRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PostingRepository::class)
@@ -17,6 +15,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Posting
 {
     /**
+     * Primary key.
+     *
+     * @var int
+     *
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
@@ -24,50 +26,77 @@ class Posting
     private $id;
 
     /**
+     * Date.
+     *
+     * @var DateTimeInterface
+     *
      * @ORM\Column(type="datetime")
+     *
+     * @Assert\NotBlank()
+     * @Assert\Type(type="\DateTimeInterface")
+     *
      */
     private $date;
 
     /**
+     * Description.
+     *
      * @ORM\Column(type="text")
+     *
+     * @Assert\NotBlank()
+     *
      */
     private $description;
 
     /**
+     * Tags.
+     *
      * @ORM\Column(type="text")
+     *
+     * @Assert\NotBlank()
      */
     private $tags;
 
     /**
+     * Image.
+     *
      * @ORM\Column(type="string", length=255)
      *
+     * @Assert\NotBlank()
      * @Assert\Url(message="Dany url nie jest obrazkiem")
      */
     private $img;
 
     /**
+     * Title.
+     *
      * @ORM\Column(type="string", length=512)
      *
+     * @Assert\NotBlank()
      * @Assert\Type(type="string")
-     * @Assert\NotBlank
      * @Assert\Length(
      *     min="3",
-     *     max="64",
+     *     max="512",
      * )
      */
     private $title;
 
     /**
+     * Category.
+     *
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="postings")
      */
     private $category;
 
     /**
+     * Comments.
+     *
      * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="posting", orphanRemoval=true)
      */
     private $comments;
 
     /**
+     * Is Active.
      * @ORM\Column(type="boolean")
      */
     private $isActive;
@@ -81,6 +110,8 @@ class Posting
     }
 
     /**
+     * Getter for id.
+     *
      * @return int|null
      */
     public function getId(): ?int
@@ -89,6 +120,8 @@ class Posting
     }
 
     /**
+     * Getter for date.
+     *
      * @return \DateTimeInterface|null
      */
     public function getDate(): ?\DateTimeInterface
@@ -97,6 +130,8 @@ class Posting
     }
 
     /**
+     * Setter for date.
+     *
      * @param \DateTimeInterface $date
      *
      * @return $this
@@ -109,6 +144,8 @@ class Posting
     }
 
     /**
+     * Getter for description.
+     *
      * @return string|null
      */
     public function getDescription(): ?string
@@ -117,6 +154,8 @@ class Posting
     }
 
     /**
+     * Setter for description.
+     *
      * @param string $description
      *
      * @return $this
@@ -129,6 +168,8 @@ class Posting
     }
 
     /**
+     * Getter for tags.
+     *
      * @return string|null
      */
     public function getTags(): ?string
@@ -137,6 +178,8 @@ class Posting
     }
 
     /**
+     * Setter for tags.
+     *
      * @param string $tags
      *
      * @return $this
@@ -149,6 +192,8 @@ class Posting
     }
 
     /**
+     * Getter for separated tags.
+     *
      * @return array
      */
     public function getSeparatedTags()
@@ -157,6 +202,8 @@ class Posting
     }
 
     /**
+     * Getter for image.
+     *
      * @return string|null
      */
     public function getImg(): ?string
@@ -165,6 +212,8 @@ class Posting
     }
 
     /**
+     * Setter for image.
+     *
      * @param string $img
      *
      * @return $this
@@ -177,6 +226,8 @@ class Posting
     }
 
     /**
+     * Getter for img path.
+     *
      * @return null
      */
     public function getImgPath()
@@ -190,6 +241,8 @@ class Posting
     }
 
     /**
+     * Getter for title.
+     *
      * @return string|null
      */
     public function getTitle(): ?string
@@ -198,6 +251,8 @@ class Posting
     }
 
     /**
+     * Setter for title.
+     *
      * @param string $title
      *
      * @return $this
@@ -210,6 +265,8 @@ class Posting
     }
 
     /**
+     * Getter for category.
+     *
      * @return Category|null
      */
     public function getCategory(): ?Category
@@ -218,6 +275,8 @@ class Posting
     }
 
     /**
+     * Setter for category.
+     *
      * @param Category|null $category
      *
      * @return $this
@@ -230,6 +289,7 @@ class Posting
     }
 
     /**
+     * Getter for comments.
      * @return Collection|Comment[]
      */
     public function getComments(): Collection
@@ -238,6 +298,8 @@ class Posting
     }
 
     /**
+     * Add comment.
+     *
      * @param Comment $comment
      *
      * @return $this
@@ -253,6 +315,8 @@ class Posting
     }
 
     /**
+     * Remove comment.
+     *
      * @param Comment $comment
      *
      * @return $this
@@ -271,6 +335,8 @@ class Posting
     }
 
     /**
+     * Getter for comments header.
+     *
      * @return string
      */
     public function getCommentsHeader()
@@ -290,6 +356,8 @@ class Posting
     }
 
     /**
+     * Getter for is active.
+     *
      * @return bool|null
      */
     public function getIsActive(): ?bool
@@ -298,6 +366,8 @@ class Posting
     }
 
     /**
+     * Setter for is active.
+     *
      * @param bool $isActive
      *
      * @return $this

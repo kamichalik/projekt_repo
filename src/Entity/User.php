@@ -5,9 +5,6 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -18,6 +15,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface
 {
     /**
+     * Primary key.
+     *
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
@@ -25,16 +24,37 @@ class User implements UserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=180, unique=true)
+     * Email.
+     *
+     * @var string
+     *
+     * @ORM\Column(
+     *     type="string",
+     *     length=180,
+     *     unique=true
+     *)
      */
     private $email;
 
+//* @Assert\NotBlank
+//* @Assert\Email(
+//*     message = "The email '{{ value }}' is not a valid email."
+//* )
+//* @Assert\Length(
+//*      min="3",
+//*      max="180",
+//* )
+
     /**
+     * Roles.
+     *
      * @ORM\Column(type="json")
      */
     private $roles = [];
 
     /**
+     * Password.
+     *
      * @var string The hashed password
      *
      * @ORM\Column(type="string")
@@ -42,6 +62,8 @@ class User implements UserInterface
     private $password;
 
     /**
+     * Getter for id.
+     *
      * @return int|null
      */
     public function getId(): ?int
@@ -50,6 +72,8 @@ class User implements UserInterface
     }
 
     /**
+     * Getter for email.
+     *
      * @return string|null
      */
     public function getEmail(): ?string
@@ -58,6 +82,8 @@ class User implements UserInterface
     }
 
     /**
+     * Setter for email.
+     *
      * @param string $email
      *
      * @return $this
@@ -82,6 +108,8 @@ class User implements UserInterface
     }
 
     /**
+     * Getter for roles.
+     *
      * @see UserInterface
      *
      * @return array
@@ -96,6 +124,8 @@ class User implements UserInterface
     }
 
     /**
+     * Setter for roles.
+     *
      * @param array $roles
      *
      * @return $this
@@ -108,6 +138,8 @@ class User implements UserInterface
     }
 
     /**
+     * Getter for password.
+     *
      * @see UserInterface
      *
      * @return string
@@ -118,6 +150,8 @@ class User implements UserInterface
     }
 
     /**
+     * Setter for password.
+     *
      * @param string $password
      *
      * @return $this
@@ -130,6 +164,8 @@ class User implements UserInterface
     }
 
     /**
+     * Getter for salt.
+     *
      * @see UserInterface
      */
     public function getSalt()
@@ -138,6 +174,8 @@ class User implements UserInterface
     }
 
     /**
+     * Erase credentials.
+     *
      * @see UserInterface
      */
     public function eraseCredentials()

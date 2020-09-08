@@ -1,18 +1,19 @@
 {% extends 'base.html.twig' %}
-{% block title %}{{ 'title.category_create'|trans }}{% endblock %}
+{% block title %}{{ 'title.category_delete'|trans }}{% endblock %}
 {% block body %}
 
     <div class="container">
         <div class="row my-3">
             <div class="col-md-6 offset-md-3">
                 {% include 'default/_form.html.twig' with {
-                    page_title: 'title_category_create',
+                    page_title: 'title.catgeory_delete',
+                    page_title_param: {'%id%': category.id},
                     attr: {
-                        method: 'POST',
-                        action: url('category_create')
+                        method: 'DELETE',
+                        action: url('category_delete', {'id': category.id})
                     },
                     form: form,
-                    submit_label: 'action.save'|trans,
+                    submit_label: 'action.delete'|trans,
                     back_to_list_path: 'categories',
                 } %}
             </div>
@@ -20,3 +21,6 @@
     </div>
 
 {% endblock %}
+
+
+

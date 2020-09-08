@@ -7,6 +7,7 @@ namespace App\Repository;
 
 use App\Entity\Posting;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -18,6 +19,17 @@ use Doctrine\Persistence\ManagerRegistry;
 class PostingRepository extends ServiceEntityRepository
 {
     /**
+     * Items per page.
+     *
+     * Use constants to define configuration options that rarely change instead
+     * of specifying them in app/config/config.yml.
+     * See https://symfony.com/doc/current/best_practices.html#configuration
+     *
+     * @constant int
+     */
+    const PAGINATOR_ITEMS_PER_PAGE = 10;
+
+    /**
      * PostingRepository constructor.
      *
      * @param ManagerRegistry $registry
@@ -27,32 +39,73 @@ class PostingRepository extends ServiceEntityRepository
         parent::__construct($registry, Posting::class);
     }
 
-    // /**
-    //  * @return Posting[] Returns an array of Posting objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * Query all records.
+     *
+     * @return \Doctrine\ORM\QueryBuilder Query builder
+     */
+    public function queryAll(): QueryBuilder
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        return $this->getOrCreateQueryBuilder()
+            ->orderBy('posting.id', 'DESC');
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Posting
+//    /**
+//     * Query postings by category.
+//     *
+//     * @param \App\Entity\Category $category
+//     *
+//     * @return \Doctrine\ORM\QueryBuilder Query builder
+//     */
+//    public function queryByCategory(Category $category = null): QueryBuilder
+//    {
+//        $queryBuilder = $this->queryAll();
+//
+//        if (!is_null($category)) {
+//            $queryBuilder->andWhere('posting.category = :category')
+//                ->setParameter('category', $category);
+//        }
+//
+//        return $queryBuilder;
+//    }
+
+    /**
+     * Get or create new query builder.
+     *
+     * @param \Doctrine\ORM\QueryBuilder|null $queryBuilder Query builder
+     *
+     * @return \Doctrine\ORM\QueryBuilder Query builder
+     */
+    private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        return $queryBuilder ?? $this->createQueryBuilder('posting');
     }
-    */
+
+    /**
+     * Save record.
+     *
+     * @param \App\Entity\Posting $posting
+     *
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function save(Posting $posting): void
+    {
+        $this->_em->persist($posting);
+        $this->_em->flush($posting);
+    }
+
+    /**
+     * Delete record.
+     *
+     * @param \App\Entity\Posting $posting
+     *
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function delete(Posting $posting): void
+    {
+        $this->_em->remove($posting);
+        $this->_em->flush($posting);
+    }
 }

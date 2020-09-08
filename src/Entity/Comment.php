@@ -5,15 +5,14 @@
 
 namespace App\Entity;
 
-use App\Repository\CommentRepository;
-use Doctrine\ORM\Mapping as ORM;
-
 /**
  * @ORM\Entity(repositoryClass=CommentRepository::class)
  */
 class Comment
 {
     /**
+     * Primary key.
+     *
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
@@ -21,22 +20,36 @@ class Comment
     private $id;
 
     /**
+     * Posting.
+     *
      * @ORM\ManyToOne(targetEntity=Posting::class, inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
      */
     private $posting;
 
     /**
+     * Content.
+     *
      * @ORM\Column(type="text")
      */
     private $content;
 
     /**
+     * Date.
+     *
      * @ORM\Column(type="datetime")
      */
     private $date;
 
     /**
+     * User.
+     * @ORM\Column(type="string", length=45)
+     */
+    private $user;
+
+    /**
+     * Getter for id.
+     *
      * @return int|null
      */
     public function getId(): ?int
@@ -45,6 +58,8 @@ class Comment
     }
 
     /**
+     * Getter for posting.
+     *
      * @return Posting|null
      */
     public function getPosting(): ?Posting
@@ -53,6 +68,8 @@ class Comment
     }
 
     /**
+     * Setter for posting.
+     *
      * @param Posting|null $posting
      *
      * @return $this
@@ -65,6 +82,8 @@ class Comment
     }
 
     /**
+     * Getter for content.
+     *
      * @return string|null
      */
     public function getContent(): ?string
@@ -73,6 +92,8 @@ class Comment
     }
 
     /**
+     * Setter for content.
+     *
      * @param string $content
      *
      * @return $this
@@ -85,6 +106,8 @@ class Comment
     }
 
     /**
+     * Getter for date.
+     *
      * @return \DateTimeInterface|null
      */
     public function getDate(): ?\DateTimeInterface
@@ -93,6 +116,7 @@ class Comment
     }
 
     /**
+     * Setter for date.
      * @param \DateTimeInterface $date
      *
      * @return $this
@@ -100,6 +124,29 @@ class Comment
     public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
+
+        return $this;
+    }
+
+    /**
+     * Getter for user.
+     *
+     * @return string|null
+     */
+    public function getUser(): ?string
+    {
+        return $this->user;
+    }
+
+    /**
+     * Setter for user.
+     *
+     * @param string $user
+     * @return $this
+     */
+    public function setUser(string $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

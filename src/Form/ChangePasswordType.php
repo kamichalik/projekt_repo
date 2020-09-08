@@ -15,16 +15,48 @@ use Symfony\Component\Form\FormBuilderInterface;
 class ChangePasswordType extends \Symfony\Component\Form\AbstractType
 {
     /**
+     * Builds the form.
+     *
      * @param FormBuilderInterface $builder
      * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add(
+                'currentPassword',
+                PasswordType::class,
+                [
+                    'label' => 'label.password',
+                    'required' => true,
+                    'attr' => ['max_length' => 255],
+                ]
+            )
 
-            ->add('currentPassword', PasswordType::class)
-            ->add('password', PasswordType::class)
-            ->add('repeatPassword', PasswordType::class)
-            ->add('save', SubmitType::class);
+            ->add(
+                'password',
+                PasswordType::class,
+                [
+                    'label' => 'label.new_password',
+                    'required' => true,
+                    'attr' => ['max_length' => 255],
+                ]
+            )
+            ->add(
+                'repeatPassword',
+                PasswordType::class,
+                [
+                    'label' => 'label.repeat_password',
+                    'required' => true,
+                    'attr' => ['max_length' => 255],
+                ]
+            )
+            ->add(
+                'save',
+                SubmitType::class,
+                [
+                    'label' => 'action.save',
+                ]
+            );
     }
 }
