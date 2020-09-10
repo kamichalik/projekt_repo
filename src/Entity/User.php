@@ -33,17 +33,16 @@ class User implements UserInterface
      *     length=180,
      *     unique=true
      *)
+     * @Assert\NotBlank
+     * @Assert\Email(
+     *     message = "message.not_email"
+     * )
+     * @Assert\Length(
+     *      min="3",
+     *      max="180",
+     * )
      */
     private $email;
-
-//* @Assert\NotBlank
-//* @Assert\Email(
-//*     message = "The email '{{ value }}' is not a valid email."
-//* )
-//* @Assert\Length(
-//*      min="3",
-//*      max="180",
-//* )
 
     /**
      * Roles.
@@ -58,13 +57,16 @@ class User implements UserInterface
      * @var string The hashed password
      *
      * @ORM\Column(type="string")
+     *
+     * @Assert\NotBlank
+     * @Assert\Type(type="string")
      */
     private $password;
 
     /**
      * Getter for id.
      *
-     * @return int|null
+     * @return int
      */
     public function getId(): ?int
     {
@@ -74,7 +76,7 @@ class User implements UserInterface
     /**
      * Getter for email.
      *
-     * @return string|null
+     * @return string
      */
     public function getEmail(): ?string
     {
@@ -98,9 +100,9 @@ class User implements UserInterface
     /**
      * A visual identifier that represents this user.
      *
-     * @see UserInterface
-     *
      * @return string
+     *
+     * @see UserInterface
      */
     public function getUsername(): string
     {
@@ -110,9 +112,9 @@ class User implements UserInterface
     /**
      * Getter for roles.
      *
-     * @see UserInterface
-     *
      * @return array
+     *
+     * @see UserInterface
      */
     public function getRoles(): array
     {
@@ -140,9 +142,9 @@ class User implements UserInterface
     /**
      * Getter for password.
      *
-     * @see UserInterface
-     *
      * @return string
+     *
+     * @see UserInterface
      */
     public function getPassword(): string
     {

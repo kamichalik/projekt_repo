@@ -24,43 +24,35 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <a href="{{ path('postings') }}" class="nav-item text-white mr-2">{{ 'title.main_page'|trans }}</a>
-            <button type="button" class="btn btn-light navbar-btn">
+            <button type="button" class="btn btn-dark navbar-btn">
+                <a href="{{ path('postings') }}" class="nav-item text-white">{{ 'title.main_page'|trans }}</a>
+            </button>
+
+            <button type="button" class="btn btn-light navbar-btn ml-2">
                 <a href="{{ path('posting_create') }}" class="nav-item">{{ 'title.posting_create'|trans }}</a>
             </button>
+
             {% if is_granted('ROLE_ADMIN') %}
-            <div class="collapse navbar-collapse" id="mainNav">
-                <div class="navbar-nav">
-                    <a class="nav-link dropdown-toggle" href="" id="postingsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ 'title.postings'|trans }}</a>
-                        <div class="dropdown-menu bg-primary">
-                            <a class="nav-item nav-link" href="{{ url('postings_admin') }}">{{ 'show_all'|trans }}</a>
-                            <a class="nav-item nav-link" href="{{ url('posting_create') }}">{{ 'title.posting_create'|trans }}</a>
-                            <a class="nav-item nav-link" href="{{ url('posting_update', {'id':100}) }}">{{ 'title.posting_update'|trans }}</a>
-                        </div>
-                </div>
-                <div class="navbar-nav">
-                    <a class="nav-link dropdown-toggle" href="" id="categoriesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ 'title.categories'|trans }}</a>
-                        <div class="dropdown-menu bg-primary">
-                            <a class="nav-item nav-link" href="{{ url('categories', {'pageNumber':1}) }}">{{ 'show_all'|trans }}</a>
-                            <a class="nav-item nav-link" href="{{ url('category_create') }}">{{ 'title.category_create'|trans }}</a>
-                            <a class="nav-item nav-link" href="{{ url('category_update', {'id':10}) }}">{{ 'title.category_update'|trans }}</a>
-                        </div>
-                </div>
-                <div class="navbar-nav">
-                    <a class="nav-link dropdown-toggle" href="" id="commentsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ 'title.comments'|trans }}</a>
-                        <div class="dropdown-menu bg-primary">
-                            <a class="nav-item nav-link" href="{{ url('comments', {'pageNumber':1}) }}">{{ 'show_all'|trans }}</a>
-                            <a class="nav-item nav-link" href="{{ url('comment_create') }}">{{ 'title.comment_create'|trans }}</a>
-                            <a class="nav-item nav-link" href="{{ url('comment_update', {'id':13}) }}">{{ 'title.comment_update'|trans }}</a>
-                        </div>
-                </div>
+
+                <button type="button" class="btn btn-outline-light navbar-btn ml-2">
+                    <a class="text-white" href="{{ url('postings_admin') }}">{{ 'title.postings'|trans }}</a>
+                </button>
+
+                <button type="button" class="btn btn-outline-light navbar-btn ml-2">
+                    <a class="text-white" href="{{ url('categories', {'pageNumber':1}) }}">{{ 'title.categories'|trans }}</a>
+                </button>
+
+                <button type="button" class="btn btn-outline-light navbar-btn ml-2">
+                    <a class="text-white" href="{{ url('comments', {'pageNumber':1}) }}">{{ 'title.comments'|trans }}</a>
+                </button>
+
                 {% endif %}
 
                 <div class="navbar-nav navbar-right ml-auto btn-toolbar">
                     {% if app.user %}
                         <span class="navbar-text">{{ 'label.logged_as'|trans }} {{ app.user.username }}</span>
                         <button type="button" class="btn btn-light navbar-btn navbar-right ml-2">
-                            <a href="{{ path('user_edit') }}">{{ 'label.edit_profile'|trans }}</a>
+                            <a href="{{ path('user_update') }}">{{ 'label.edit_profile'|trans }}</a>
                         </button>
                         <button type="button" class="btn btn-light navbar-btn navbar-right ml-2">
                             <a href="{{ path('app_logout') }}" class="nav-item">{{ 'label.logout'|trans }}</a>

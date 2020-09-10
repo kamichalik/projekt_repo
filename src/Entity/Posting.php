@@ -31,10 +31,6 @@ class Posting
      * @var DateTimeInterface
      *
      * @ORM\Column(type="datetime")
-     *
-     * @Assert\NotBlank()
-     * @Assert\Type(type="\DateTimeInterface")
-     *
      */
     private $date;
 
@@ -44,26 +40,22 @@ class Posting
      * @ORM\Column(type="text")
      *
      * @Assert\NotBlank()
-     *
+     * @Assert\Length(
+     *     min="3",
+     *     max="9000",
+     * )
      */
     private $description;
-
-    /**
-     * Tags.
-     *
-     * @ORM\Column(type="text")
-     *
-     * @Assert\NotBlank()
-     */
-    private $tags;
 
     /**
      * Image.
      *
      * @ORM\Column(type="string", length=255)
      *
-     * @Assert\NotBlank()
-     * @Assert\Url(message="Dany url nie jest obrazkiem")
+     * @Assert\Regex(
+     *     pattern="/^$|(\S\.(jpe?g|png|gif|bmp)$)/",
+     *     message="message.not_img"
+     *);
      */
     private $img;
 
@@ -97,6 +89,7 @@ class Posting
 
     /**
      * Is Active.
+     *
      * @ORM\Column(type="boolean")
      */
     private $isActive;
@@ -112,7 +105,7 @@ class Posting
     /**
      * Getter for id.
      *
-     * @return int|null
+     * @return int
      */
     public function getId(): ?int
     {
@@ -122,7 +115,7 @@ class Posting
     /**
      * Getter for date.
      *
-     * @return \DateTimeInterface|null
+     * @return DateTimeInterface
      */
     public function getDate(): ?\DateTimeInterface
     {
@@ -132,7 +125,7 @@ class Posting
     /**
      * Setter for date.
      *
-     * @param \DateTimeInterface $date
+     * @param DateTimeInterface $date
      *
      * @return $this
      */
@@ -146,7 +139,7 @@ class Posting
     /**
      * Getter for description.
      *
-     * @return string|null
+     * @return string
      */
     public function getDescription(): ?string
     {
@@ -168,43 +161,9 @@ class Posting
     }
 
     /**
-     * Getter for tags.
-     *
-     * @return string|null
-     */
-    public function getTags(): ?string
-    {
-        return $this->tags;
-    }
-
-    /**
-     * Setter for tags.
-     *
-     * @param string $tags
-     *
-     * @return $this
-     */
-    public function setTags(string $tags): self
-    {
-        $this->tags = $tags;
-
-        return $this;
-    }
-
-    /**
-     * Getter for separated tags.
-     *
-     * @return array
-     */
-    public function getSeparatedTags()
-    {
-        return explode(',', $this->tags);
-    }
-
-    /**
      * Getter for image.
      *
-     * @return string|null
+     * @return string
      */
     public function getImg(): ?string
     {
@@ -243,7 +202,7 @@ class Posting
     /**
      * Getter for title.
      *
-     * @return string|null
+     * @return string
      */
     public function getTitle(): ?string
     {
@@ -267,7 +226,7 @@ class Posting
     /**
      * Getter for category.
      *
-     * @return Category|null
+     * @return Category
      */
     public function getCategory(): ?Category
     {
@@ -277,7 +236,7 @@ class Posting
     /**
      * Setter for category.
      *
-     * @param Category|null $category
+     * @param Category $category
      *
      * @return $this
      */
@@ -290,6 +249,7 @@ class Posting
 
     /**
      * Getter for comments.
+     *
      * @return Collection|Comment[]
      */
     public function getComments(): Collection
@@ -358,7 +318,7 @@ class Posting
     /**
      * Getter for is active.
      *
-     * @return bool|null
+     * @return bool
      */
     public function getIsActive(): ?bool
     {

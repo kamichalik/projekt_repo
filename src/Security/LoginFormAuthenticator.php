@@ -22,10 +22,9 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
 use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Class LoginFormAuthenticator
+ * Class LoginFormAuthenticator.
  */
 class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements PasswordAuthenticatedInterface
 {
@@ -55,6 +54,10 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     }
 
     /**
+     * Does the authenticator support the given Request?
+     *
+     * If this returns false, the authenticator will be skipped.
+     *
      * @param Request $request
      *
      * @return bool
@@ -66,6 +69,10 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     }
 
     /**
+     * Get the authentication credentials from the request and return them
+     * as any type (e.g. an associate array). If you return null, authentication
+     * will be skipped.
+     *
      * @param Request $request
      *
      * @return array|mixed
@@ -86,6 +93,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     }
 
     /**
+     * Get user.
+     *
      * @param mixed                 $credentials
      * @param UserProviderInterface $userProvider
      *
@@ -109,6 +118,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     }
 
     /**
+     * Check credentials.
+     *
      * @param mixed         $credentials
      * @param UserInterface $user
      *
@@ -133,6 +144,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     }
 
     /**
+     * Called when authentication executed and was successful.
+     *
      * @param Request        $request
      * @param TokenInterface $token
      * @param string         $providerKey
@@ -150,6 +163,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
     }
 
     /**
+     * Return the URL to the login page.
+     *
      * @return string
      */
     protected function getLoginUrl()

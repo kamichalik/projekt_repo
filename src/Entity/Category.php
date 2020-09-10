@@ -33,17 +33,14 @@ class Category
      *     type="string",
      *     length=255
      *     )
-     *
-     *
+     * @Assert\Type(type="string")
+     * @Assert\NotBlank
+     * @Assert\Length(
+     *     min="3",
+     *     max="255",
+     *     )
      */
     private $name;
-
-//@Assert\Type(type="string")
-//* @Assert\NotBlank
-//* @Assert\Length(
-//*     min="3",
-//*     max="255",
-//*     )
 
     /**
      * @ORM\OneToMany(targetEntity=Posting::class, mappedBy="category")
@@ -61,7 +58,7 @@ class Category
     /**
      * Getter for id.
      *
-     * @return int|null
+     * @return int
      */
     public function getId(): ?int
     {
@@ -71,7 +68,7 @@ class Category
     /**
      * Getter for name.
      *
-     * @return string|null
+     * @return string
      */
     public function getName(): ?string
     {

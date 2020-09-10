@@ -5,39 +5,46 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 offset-md-2">
-            <h1 class="mt-5">{{ post.title }}</h1>
-            <div class="row my-4">
-                <div class="col">
+            <h1 class="my-5">{{ post.title }}</h1>
+            <div class="row py-3 border-top border-primary">
+                <div class="col-6">
                 {{ post.date|format_date('long') }}
                 </div>
-            </div>
-            <div class="row my-4">
-                <div class="col">{{ 'label.category'|trans }}:
+                <div class="col-6">{{ 'label.category'|trans }}:
                     {{ post.category.name }}
                 </div>
-                <div class="col">{{ 'label.tags'|trans }}:
-                    {{ include ("posting/_tags.html.twig", {
-                        'post':post
-                        })
-                    }}
-                </div>
             </div>
-            <p>
-                {{ post.description }}
-            </p>
+            <div class="pt-4 border-top border-primary">
+                <p>
+                    {{ post.description }}
+                </p>
+            </div>
         </div>
-        <div class="row">
-            {{ include ("posting/_img.html.twig", {
-                'post':post
-                })
-            }}
+        <div class="row justify-content-center">
+            <div class="col-8 my-3">
+            {% if post.getImgPath is not empty %}
+                <img src="{{ post.img }}" class="img-fluid img-thumbnail">
+            {% endif %}
+            </div>
         </div>
     </div>
     <div class="row mt-5">
-        <div class="col-md-8 offset-md-2">
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="col-md-8 offset-md-2">
+                    <button class="btn btn-warning mb-4 mr-2">
+                        <a class="text-white" href="{{ path('posting_update', {'id': post.id}) }}">{{ 'action.update'|trans }}</a>
+                    </button>
+                    <button  class="btn btn-danger mb-4">
+                        <a class="text-white" href="{{ path('posting_delete', {'id': post.id}) }}">{{ 'action.delete'|trans }}</a>
+                    </button>
+                </div>
+            {% endif %}
+
+        <div class="col-md-8 offset-md-2 pt-4 border-top border-primary">
             <button type="button" class="btn btn-primary mb-4">
-                <a class="text-white" href="{{ url ('comment_create') }}">{{ 'label.leave_comment'|trans }}</a>
+                <a class="text-white" href="{{ url ('comment_create' , {'postingId':posting_id}) }}">{{ 'label.leave_comment'|trans }}</a>
             </button>
+
             {% if post.comments is not empty %}
                 <h3 class="mb-5">{{ 'label.comments'|trans }}:</h3>
                 {% for comment in post.comments %}
@@ -53,7 +60,7 @@
                     </div>
                 {% endfor %}
             {% else %}
-            <h4>{{ 'no_comments'|trans }}</h4>
+            <h4 class="mb-5">{{ 'no_comments'|trans }}</h4>
             {% endif %}
         </div>
     </div>

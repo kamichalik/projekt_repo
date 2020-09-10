@@ -32,7 +32,6 @@ class PostingFixtures extends AbstractBaseFixtures
             $posting->setIsActive(1);
             $posting->setTitle($this->faker->sentence);
             $posting->setDescription($this->faker->paragraph($nbSentences = 3, $variableNbSentences = true));
-            $posting->setTags('tag, tag2');
             $posting->setDate($this->faker->dateTime($max = 'now', $timezone = null));
             $posting->setImg($this->faker->imageUrl($width = 640, $height = 480));
             $posting->setCategory($category);

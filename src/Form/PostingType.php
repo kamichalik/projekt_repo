@@ -10,11 +10,12 @@ use App\Entity\Posting;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class PostingType
+ * Class PostingType.
  */
 class PostingType extends AbstractType
 {
@@ -28,8 +29,8 @@ class PostingType extends AbstractType
     {
         $builder
             ->add(
-            'title',
-            TextType::class,
+                'title',
+                TextType::class,
                 [
                     'label' => 'label.posting_title',
                     'required' => true,
@@ -58,24 +59,12 @@ class PostingType extends AbstractType
             )
 
             ->add(
-                'tags',
-                TextType::class,
-                [
-                    'label' => 'label.tags',
-                    'required' => true,
-                    'attr' => ['max_length' => 255],
-                ]
-            )
-
-            ->add(
                 'img',
-
-//                [
-//
-//                'label' => 'label.img',
-//                'required' => true,
-//
-//                ]
+                UrlType::class,
+                [
+                    'label' => 'label.img',
+                    'required' => false,
+                ]
             );
     }
 

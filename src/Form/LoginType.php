@@ -12,7 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
- * Class LoginType
+ * Class LoginType.
  */
 class LoginType extends AbstractType
 {

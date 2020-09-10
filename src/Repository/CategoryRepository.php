@@ -1,6 +1,6 @@
 <?php
 /**
- * Category repository
+ * Category repository.
  */
 
 namespace App\Repository;
@@ -27,7 +27,7 @@ class CategoryRepository extends ServiceEntityRepository
      *
      * @constant int
      */
-    const PAGINATOR_ITEMS_PER_PAGE = 3;
+    const PAGINATOR_ITEMS_PER_PAGE = 10;
 
     /**
      * CategoryRepository constructor.
@@ -51,21 +51,9 @@ class CategoryRepository extends ServiceEntityRepository
     }
 
     /**
-     * Get or create new query builder.
-     *
-     * @param \Doctrine\ORM\QueryBuilder|null $queryBuilder Query builder
-     *
-     * @return \Doctrine\ORM\QueryBuilder Query builder
-     */
-    private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
-    {
-        return $queryBuilder ?? $this->createQueryBuilder('category');
-    }
-
-    /**
      * Save record.
      *
-     * @param \App\Entity\Category $category
+     * @param Category $category
      *
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
@@ -79,7 +67,7 @@ class CategoryRepository extends ServiceEntityRepository
     /**
      * Delete record.
      *
-     * @param \App\Entity\Category $category
+     * @param Category $category
      *
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
@@ -90,4 +78,15 @@ class CategoryRepository extends ServiceEntityRepository
         $this->_em->flush($category);
     }
 
+    /**
+     * Get or create new query builder.
+     *
+     * @param \Doctrine\ORM\QueryBuilder|null $queryBuilder Query builder
+     *
+     * @return \Doctrine\ORM\QueryBuilder Query builder
+     */
+    private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
+    {
+        return $queryBuilder ?? $this->createQueryBuilder('category');
+    }
 }

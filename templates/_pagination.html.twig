@@ -1,9 +1,6 @@
 {% block body %}
-<style>
 
-</style>
-
-<div class="pagination pagination-lg">
+<div class="pagination" style="color: green !important">
     {% if pageNumber > 1 %}
     <li class="page-item"><a class="page-link" href=" {{ url(path, {'pageNumber': pageNumber - 1}) }} "aria-label="Previous">
             <span aria-hidden="true">&laquo;</span>

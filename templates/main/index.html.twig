@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'title.record_list'|trans }}{% endblock %}
+
+{% block body %}
+
+    <div class="jumbotron">
+        <h1>{{ 'title.record_list'|trans }}</h1>
+    </div>
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-4">
+                <h3 class="ml-3">{{ 'title.sidebar'|trans}}</h3>
+                <div class="btn-group-vertical text-light" role="group">
+                {% for category in categories %}
+                  {% set className="" %}
+                    {% if currentCategory is not null and category.id == currentCategory.id %}
+                        {% set className="current-category" %}
+                    {% endif %}
+                    <button type="button" class="btn btn-primary btn-lg mt-3 ml-3" {{ className }}><a class="text-white" href="{{  url ("postings_in_category", {'id':category.id}) }}">{{ category.name }}</a>
+                    </button>
+                {% endfor %}
+                </div>
+            </div>
+
+            <div class="postings-wrapper col-md-8">
+
+                {% if pagination is defined and pagination.items|length %}
+
+                {% for post in pagination.items %}
+                    <div class="container py-3">
+                        <div class="card">
+                            <div class="card-horizontal" style="display: flex;">
+
+                                <div class="row card-body">
+                                    <div class="col-md-8 ">
+                                        <div class="card-header text-muted">
+                                            <a href="{{  url ("postings_in_category", {'id':post.category.id}) }}">{{ post.category.name }}</a>
+                                        </div>
+                                        <h4 class="card-title py-3">{{ post.title }}</h4>
+                                        <h6 class="card-subtitle text-muted">{{ post.date|format_date('long') }}</h6>
+                                        <p class="card-text py-2">{{ post.description }}</p>
+                                        <a class="card-link" href="{{ url("posting", {'id':post.id}) }}">{{ 'read_more'|trans }}</a>
+                                        <p class="card-text py-2">{% if post.comments|length>0 %}
+                                                {{ post.comments|length}} {{  post.getCommentsHeader() }}
+                                            {% endif %}
+                                        </p>
+                                    </div>
+
+                                <div class="col-md-4 my-auto">
+                                    {% if post.img is not empty %}
+                                        <img src="{{ post.img }}" class="img-fluid img-thumbnail">
+                                    {% endif %}
+                                </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    <div class="navigation text-center">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+
+    {% else %}
+        <p>
+            {{ 'message.no_records'|trans }}
+        </p>
+    {% endif %}
+
+
+    </div>
+</div>
+{% endblock %}

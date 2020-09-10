@@ -6,15 +6,13 @@
 namespace App\Form;
 
 use App\Entity\Comment;
-use App\Entity\Posting;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class CommentType
+ * Class CommentType.
  */
 class CommentType extends AbstractType
 {
@@ -28,12 +26,12 @@ class CommentType extends AbstractType
     {
         $builder
             ->add(
-            'user',
-            TextType::class,
+                'user',
+                TextType::class,
                 [
-                'label' => 'label.user',
-                'required' => true,
-                'attr' => ['max_length' => 45],
+                    'label' => 'label.user',
+                    'required' => true,
+                    'attr' => ['max_length' => 45],
                 ]
             )
 
@@ -45,13 +43,13 @@ class CommentType extends AbstractType
                     'required' => true,
                     'attr' => ['max_length' => 255],
                 ]
-            )
+            );
 
-            ->add('posting', EntityType::class, [
-                'class' => Posting::class,
-                'choice_label' => 'title',
-                'label' => 'label.posting',
-            ]);
+//            ->add('posting', EntityType::class, [
+//                'class' => Posting::class,
+//                'choice_label' => 'title',
+//                'label' => 'label.posting',
+//            ]);
     }
 
     /**

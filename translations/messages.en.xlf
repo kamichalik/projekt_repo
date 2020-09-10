@@ -138,6 +138,10 @@
                 <source>title.post_update</source>
                 <target>Update post</target>
             </trans-unit>
+            <trans-unit id="title.comment_delete">
+                <source>title.comment_delete</source>
+                <target>Delete comment</target>
+            </trans-unit>
             <trans-unit id="label.login">
                 <source>label.login</source>
                 <target>Log in</target>
@@ -149,6 +153,10 @@
             <trans-unit id="label.edit_profile">
                 <source>label.edit_profile</source>
                 <target>Edit profile</target>
+            </trans-unit>
+            <trans-unit id="account.updated">
+                <source>account.updated</source>
+                <target>Profile detils updated</target>
             </trans-unit>
             <trans-unit id="label.logged_as">
                 <source>label.logged_as</source>
@@ -282,6 +290,19 @@
                 <source>label.leave_comment</source>
                 <target>Leave a comment</target>
             </trans-unit>
+            <trans-unit id="label.no_img">
+                <source>label.no_img</source>
+                <target>No image</target>
+            </trans-unit>
+            <trans-unit id="log.not_match">
+                <source>log.not_match</source>
+                <target>Passwords do not match</target>
+            </trans-unit>
+            <trans-unit id="log.incorrect_pw">
+                <source>log.incorrect_pw</source>
+                <target>Incorrect password</target>
+            </trans-unit>
+
 
 
 

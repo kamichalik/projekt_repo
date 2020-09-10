@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class CategoryType
+ * Class CategoryType.
  */
 class CategoryType extends AbstractType
 {
@@ -22,18 +22,18 @@ class CategoryType extends AbstractType
      * @param FormBuilderInterface $builder
      * @param array                $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options):void
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add(
-            'name',
-            TextType::class,
-            [
+                'name',
+                TextType::class,
+                [
                 'label' => 'label.name',
                 'required' => true,
                 'attr' => ['max_length' => 45],
-            ]
-        );
+                ]
+            );
     }
 
     /**
@@ -41,7 +41,7 @@ class CategoryType extends AbstractType
      *
      * @param OptionsResolver $resolver
      */
-    public function configureOptions(OptionsResolver $resolver):void
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Category::class,

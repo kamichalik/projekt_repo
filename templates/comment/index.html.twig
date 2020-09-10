@@ -26,7 +26,7 @@
                     <td>{{ comment.user }}</td>
                     <td>{{ comment.content }}</td>
                     <td>{{ comment.date|format_date('long') }}</td>
-{#                    <td>{{ comment.posting }}</td>#}
+                    <td>{{ comment.posting.id }}</td>
                     <td>
                         <a href="{{ path('comment_view', {'id': comment.id}) }}" class="btn btn-primary">{{ 'action.view'|trans }}</a>
                         <a href="{{ path('comment_update', {'id': comment.id}) }}"class="btn btn-warning ml-2">{{ 'action.update'|trans }}</a>

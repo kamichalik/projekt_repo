@@ -7,6 +7,12 @@
 <div class="container col-6">
     <h1 class="text-center py-4">{{ 'title.categories'|trans }}</h1>
 
+    <div class="row justify-content-end mb-4 mr-4">
+        <button type="button" class="btn btn-success navbar-btn">
+            <a class="text-white" href="{{ url('category_create') }}">{{ 'title.category_create'|trans }}</a>
+        </button>
+    </div>
+
     {% if pagination is defined and pagination.items|length %}
 
     <div>

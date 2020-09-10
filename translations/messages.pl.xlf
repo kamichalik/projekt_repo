@@ -146,6 +146,10 @@
                 <source>title.post_update</source>
                 <target>Edytuj ogłoszenie</target>
             </trans-unit>
+            <trans-unit id="title.comment_delete">
+                <source>title.comment_delete</source>
+                <target>Usuń komentarz</target>
+            </trans-unit>
             <trans-unit id="label.login">
                 <source>label.login</source>
                 <target>Zaloguj</target>
@@ -157,6 +161,10 @@
             <trans-unit id="label.edit_profile">
                 <source>label.edit_profile</source>
                 <target>Edytuj profil</target>
+            </trans-unit>
+            <trans-unit id="account.updated">
+                <source>account.updated</source>
+                <target>Edytowano dane profilu</target>
             </trans-unit>
             <trans-unit id="label.logged_as">
                 <source>label.logged_as</source>
@@ -289,6 +297,22 @@
             <trans-unit id="label.leave_comment">
                 <source>label.leave_comment</source>
                 <target>Zostaw komentarz</target>
+            </trans-unit>
+            <trans-unit id="label.no_img">
+                <source>label.no_img</source>
+                <target>Brak obrazu</target>
+            </trans-unit>
+            <trans-unit id="message.form_error">
+                <source>message.form_error</source>
+                <target>Błąd formularza</target>
+            </trans-unit>
+            <trans-unit id="log.not_match">
+                <source>log.not_match</source>
+                <target>Podane hasła nie są takie same</target>
+            </trans-unit>
+            <trans-unit id="log.incorrect_pw">
+                <source>log.incorrect_pw</source>
+                <target>Incorrect password</target>
             </trans-unit>
 
 

@@ -1,73 +1,71 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'title.record_list'|trans }}{% endblock %}
+{% block title %}{{ 'title.postings'|trans }}{% endblock %}
 
 {% block body %}
 
-    <div class="jumbotron">
-        <h1>{{ 'title.record_list'|trans }}</h1>
-    </div>
+<div class="container">
+    <h1 class="text-center py-4">{{ 'title.postings'|trans }}</h1>
 
-    <div class="container">
+    {% if pagination is defined and pagination.items|length %}
 
-        <div class="row">
-            <div class="col-md-4">
-                <h3 class="ml-3">{{ 'title.sidebar'|trans}}</h3>
-                <div class="btn-group-vertical text-light" role="group"">
-                {% for category in categories %}
-                  {% set className="" %}
-                    {% if currentCategory is not null and category.id == currentCategory.id %}
-                        {% set className="current-category" %}
-                    {% endif %}
-                    <button type="button" class="btn btn-primary btn-lg mt-3 ml-3" {{ className }}><a class="text-white" href="{{  url ("postings_in_category", {'id':category.id}) }}">{{ category.name }}</a>
-                    </button>
-                {% endfor %}
-                </div>
-            </div>
-
-            <div class="postings-wrapper col-md-8">
-
-                {% if pagination is defined and pagination.items|length %}
-
-                {% for post in pagination.items %}
-                    <div class="container py-3">
-                        <div class="card">
-                            <div class="card-horizontal" style="display: flex;">
-
-                                <div class="row card-body">
-                                    <div class="col-md-8 ">
-                                        <div class="card-header text-muted">
-                                            <a href="{{  url ("postings_in_category", {'id':post.category.id}) }}">{{ post.category.name }}</a>
-                                        </div>
-                                        <h4 class="card-title py-3">{{ post.title }}</h4>
-{#                                        <h6 class="card-subtitle text-muted">#}
-{#                                            {{ include ("posting/_tags.html.twig",#}
-{#                                                {'post':post})#}
-{#                                            }}</h6>#}
-
-                                        <h6 class="card-subtitle text-muted">{{ post.date|format_date('long') }}</h6>
-                                        <p class="card-text py-2">{{ post.description }}</p>
-                                        <a class="card-link" href="{{ url("posting", {'id':post.id}) }}">{{ 'read_more'|trans }}</a>
-                                        <p class="card-text py-2">{% if post.comments|length>0 %}
-                                                {{ post.comments|length}} {{  post.getCommentsHeader() }}
-                                            {% endif %}
-                                        </p>
-                                    </div>
-
-                                <div class="col-md-4 my-auto">
-                                    <img src="https://picsum.photos/600/400" class="w-100">
-                                    {{ include ("posting/_img.html.twig", {
-                                        'post':post
-                                    })
-                                    }}
-                                </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
+        <div>
+            <table class="table ">
+                <thead>
+                    <th>{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'posting.id') }}</th>
+                    <th style="width: 15%">{{ knp_pagination_sortable(pagination, 'label.post_title'|trans, 'posting.title') }}</th>
+                    <th>{{ 'label.is_active'|trans }}</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'label.category'|trans, 'posting.category') }}</th>
+                    <th style="width: 40%">{{ knp_pagination_sortable(pagination, 'label.description'|trans, 'posting.description') }}</th>
+                    <th style="width: 12%">{{ knp_pagination_sortable(pagination, 'label.date'|trans, 'posting.date') }}</th>
+                    <th>{{ 'label.img'|trans }}</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'label.comments'|trans, 'posting.comments') }}</th>
+                    <th>{{ 'label.actions'|trans }}</th>
+                </thead>
+                <tbody>
+                    {% for post in pagination.items %}
+                        {% if post.isActive ==1 %}
+                        <tr class="table-secondary">
+                        {% else %}
+                        <tr class="table-active">
+                        {% endif %}
+                            <td>{{ post.id }}</td>
+                            <td>{{ post.title }}</td>
+                            <td>
+                                {% if post.isActive == 1 %}
+                                    {{ "✓" }}
+                                {% else %}
+                                    {{ "X" }}
+                                {% endif %}
+                            </td>
+                            <td>{{ post.category.name }}</td>
+                            <td>{{ post.description}}</td>
+                            <td>{{ post.date|format_date('long') }}</td>
+                            <td>
+                                {% if post.img is not null %}
+                                <a href="{{post.img}}">{{ 'label.img'|trans }}</a></td>
+                                {% else %}
+                                    {{ 'label.no_img'|trans }}
+                                {% endif %}
+                            <td>{{ post.comments|length}}</td>
+                            <td>
+                                <a href="{{ url('posting', {'id': post.id}) }}" class="btn btn-primary my-2">{{ 'action.view'|trans }}</a>
+                                {% if post.isActive == 0 %}
+                                    <a href="{{ url('activate', {'id': post.id}) }}" class="btn btn-success my-2">{{ 'action.activate'|trans }}</a>
+                                {% else %}
+                                    <a href="{{ url('deactivate', {'id': post.id}) }}" class="btn btn-warning my-2">{{ 'action.deactivate'|trans }}</a>
+                                {% endif %}
+                                <a href="{{ url('posting_update', {'id': post.id}) }}" class="btn btn-warning my-2">{{ 'action.update'|trans }}</a>
+                                <a href="{{ url('posting_delete', {'id': post.id}) }}" class="btn btn-danger my-2">{{ 'action.delete'|trans }}</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4">{{ 'no_records'|trans }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
 
     <div class="navigation text-center">
@@ -80,7 +78,5 @@
         </p>
     {% endif %}
 
-
-    </div>
 </div>
 {% endblock %}

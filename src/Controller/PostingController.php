@@ -8,6 +8,7 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Entity\Posting;
 use App\Form\PostingType;
+use App\Repository\CategoryRepository;
 use App\Repository\PostingRepository;
 use Doctrine\ORM\ORMException;
 use http\Env\Response;
@@ -17,7 +18,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class PostingController
+ * Class PostingController.
  */
 class PostingController extends AbstractController
 {
@@ -28,45 +29,12 @@ class PostingController extends AbstractController
      * @param PostingRepository  $postingRepository
      * @param PaginatorInterface $paginator
      *
-     * @return \Symfony\Component\HttpFoundation\Response
-     *
-     * @Route("/", name="postings")
-     */
-    public function index(Request $request, PostingRepository $postingRepository, PaginatorInterface $paginator)
-    {
-        $pagination = $paginator->paginate(
-            $postingRepository->queryAll(),
-            $request->query->getInt('page', 1),
-            PostingRepository::PAGINATOR_ITEMS_PER_PAGE
-        );
-
-        $postings = $this->getRepository()->findBy(
-            ['isActive' => 1],
-            ['id' => 'desc'],
-            ['pagination' => $pagination]
-        );
-
-        return $this->renderPostings($postings, $currentCategory = null, $pagination);
-    }
-
-    /**
-     * Index action admin view.
-     *
-     * @param Request            $request
-     * @param PostingRepository  $postingRepository
-     * @param PaginatorInterface $paginator
-     *
      * @return Response|\Symfony\Component\HttpFoundation\Response
      *
      * @Route("/postings", name="postings_admin")
      */
-    public function indexAdmin(Request $request, PostingRepository $postingRepository, PaginatorInterface $paginator)
+    public function index(Request $request, PostingRepository $postingRepository, PaginatorInterface $paginator)
     {
-//        $postings = $this->getRepository()->findBy([], ['id' => 'desc']);
-//
-//        return $this->render('posting/indexAdmin.html.twig', [
-//            'postings' => $postings,
-//        ]);
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $pagination = $paginator->paginate(
@@ -76,7 +44,7 @@ class PostingController extends AbstractController
         );
 
         return $this->render(
-            'posting/indexAdmin.html.twig',
+            'posting/index.html.twig',
             ['pagination' => $pagination]
         );
     }
@@ -84,47 +52,49 @@ class PostingController extends AbstractController
     /**
      * View action.
      *
-     * @param int $id
+     * @param Posting $posting
+     * @param int     $id
      *
      * @return Response|\Symfony\Component\HttpFoundation\Response
      *
      * @Route("/posting/{id}", name="posting", requirements={"id"="\d+"})
      */
-    public function show($id)
+    public function view(Posting $posting, int $id)
     {
-        $posting = $this->getPosting($id);
+        $posting->getId();
 
         return $this->render('posting/view.html.twig', [
             'post' => $posting,
+            'posting_id' => $id,
         ]);
     }
 
     /**
      * Create action.
      *
-     * @param Request $request
+     * @param Request           $request
+     * @param PostingRepository $repository
      *
      * @return Response|RedirectResponse|\Symfony\Component\HttpFoundation\Response
      *
      * @throws \Exception
      *
-     * @Route("/posting/create", name="posting_create")
+     * @Route("/posting/create", name="posting_create", methods={"GET", "POST"})
      */
-    public function create(Request $request)
+    public function create(Request $request, PostingRepository $repository)
     {
         $posting = new Posting();
         $form = $this->createForm(PostingType::class, $posting);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $posting = $form->getData();
             $posting->setIsActive(0);
             $posting->setDate(new \DateTime('now'));
-            $this->persist($posting);
+            $repository->save($posting);
 
             $this->addFlash('success', 'message.post_created_successfully');
 
-            return $this->redirect('/postings');
+            return $this->redirectToRoute('postings');
         }
         $formView = $form->createView();
 
@@ -136,12 +106,15 @@ class PostingController extends AbstractController
     /**
      * Update action.
      *
-     * @param \Symfony\Component\HttpFoundation\Request $request HTTP request
-     * @param int                                       $id      Posting id
-     * @param Posting                                   $posting
-     * @param PostingRepository                         $repository
+     * @param Request           $request
+     * @param Posting           $posting
+     * @param PostingRepository $repository
+     * @param int               $id
      *
      * @return Response|\Symfony\Component\HttpFoundation\Response
+     *
+     * @throws ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
      *
      * @Route("/posting/{id}/update", name="posting_update", requirements={"id": "[1-9]\d*"}, methods={"GET","PUT"})
      */
@@ -149,15 +122,16 @@ class PostingController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $posting = $this->getPosting($id);
+        $posting->getId();
         $form = $this->createForm(PostingType::class, $posting, ['method' => 'PUT']);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
             $repository->save($posting);
 
             $this->addFlash('success', 'message.post_updated_successfully');
 
-            return $this->redirect('/postings');
+            return $this->redirectToRoute('postings_admin');
         }
 
         return $this->render('posting/update.html.twig', [
@@ -174,10 +148,10 @@ class PostingController extends AbstractController
      * @param Posting           $posting
      * @param PostingRepository $repository
      *
+     * @return RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     *
      * @throws ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
-     *
-     * @return Response|RedirectResponse|\Symfony\Component\HttpFoundation\Response
      *
      * @Route("/posting/{id}/delete", name="posting_delete", requirements={"id": "[1-9]\d*"}, methods={"GET", "DELETE"})
      */
@@ -212,41 +186,48 @@ class PostingController extends AbstractController
     /**
      * Activate posting.
      *
-     * @param int $id
+     * @param Posting $posting
+     * @param PostingRepository $repository
      *
      * @return RedirectResponse
      *
-     * @Route("/{id}/activate", name="activate")
+     * @throws ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     *
+     * @Route("/{id}/activate", name="activate", requirements={"id"="\d+"})
      */
-    public function activate(int $id): RedirectResponse
+    public function activate(Posting $posting, PostingRepository $repository): RedirectResponse
     {
-        $posting = $this->getPosting($id);
         $posting->setIsActive(1);
-        $this->persist($posting);
+        $repository->save($posting);
 
         $this->addFlash('success', 'message.post_activated');
 
-        return new RedirectResponse('/postings');
+        return new RedirectResponse('/~16_michalik/app/postings');
     }
+
 
     /**
      * Dectivate posting.
      *
-     * @param int $id
+     * @param Posting $posting
+     * @param PostingRepository $repository
      *
      * @return RedirectResponse
      *
-     * @Route("/{id}/deactivate", name="deactivate")
+     * @throws ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     *
+     * @Route("/{id}/deactivate", name="deactivate", requirements={"id"="\d+"})
      */
-    public function deactivate(int $id): RedirectResponse
+    public function deactivate(Posting $posting, PostingRepository $repository): RedirectResponse
     {
-        $posting = $this->getPosting($id);
         $posting->setIsActive(0);
-        $this->persist($posting);
+        $repository->save($posting);
 
         $this->addFlash('warning', 'message.post_deactivated');
 
-        return new RedirectResponse('/postings');
+        return new RedirectResponse('/~16_michalik/app/postings');
     }
 
     /**
@@ -254,86 +235,36 @@ class PostingController extends AbstractController
      *
      * @param Request            $request
      * @param PostingRepository  $postingRepository
+     * @param CategoryRepository $categoryRepository
      * @param PaginatorInterface $paginator
-     * @param int                $pageNumber
+     * @param Category           $currentCategory
+     * @param int                $id
      *
      * @return Response|\Symfony\Component\HttpFoundation\Response
      *
      * @Route("/category/{id}/postings", name="postings_in_category")
      */
-    public function categoryPostings(Request $request, PostingRepository $postingRepository, PaginatorInterface $paginator, int $id)
+    public function categoryPostings(Request $request, PostingRepository $postingRepository, CategoryRepository $categoryRepository, PaginatorInterface $paginator, Category $currentCategory, int $id)
     {
-        $pagination = $paginator->paginate(
-            $postingRepository->queryAll(),
-            $request->query->getInt('page', 1),
-            PostingRepository::PAGINATOR_ITEMS_PER_PAGE
-        );
+        $categories = $categoryRepository->findBy([], ['id' => 'desc']);
 
-        $postings = $this->getRepository()->findBy(
+        $postings = $postingRepository->findBy(
             ['isActive' => 1, 'category' => $id],
             ['id' => 'desc']
         );
 
-        $categoryRepository = $this->getDoctrine()->getRepository(Category::class);
+        $pagination = $paginator->paginate(
+            $postings,
+            $request->query->getInt('page', 1),
+            PostingRepository::PAGINATOR_ITEMS_PER_PAGE
+        );
 
-        return $this->renderPostings($postings, 1, $categoryRepository->find($id), $pagination);
-    }
+        $categoryRepository->find($id);
 
-    /**
-     * Repository getter.
-     *
-     * @return \Doctrine\Persistence\ObjectRepository
-     */
-    private function getRepository(): \Doctrine\Persistence\ObjectRepository
-    {
-        return $this->getDoctrine()->getRepository(Posting::class);
-    }
-
-    /**
-     * Posting getter.
-     *
-     * @param int $id
-     *
-     * @return Posting|object
-     */
-    private function getPosting($id)
-    {
-        $doctrineRepo = $this->getRepository();
-        $posting = $doctrineRepo->find($id);
-
-        return $posting;
-    }
-
-    /**
-     * Persist.
-     *
-     * @param $posting
-     */
-    private function persist($posting): void
-    {
-        $doctrine = $this->getDoctrine()->getManager();
-        $doctrine->persist($posting);
-        $doctrine->flush();
-    }
-
-    /**
-     * Render postings.
-     *
-     * @param array         $postings
-     * @param Category|null $currentCategory
-     *
-     * @return Response|\Symfony\Component\HttpFoundation\Response
-     */
-    private function renderPostings(array $postings, Category $currentCategory = null, $pagination)
-    {
-        $categories = $this->getDoctrine()->getRepository(Category::class)->findBy([], ['id' => 'desc']);
-
-        return $this->render('posting/index.html.twig', [
-            'postings' => $postings,
+        return $this->render('main/index.html.twig', [
             'categories' => $categories,
             'currentCategory' => $currentCategory,
             'pagination' => $pagination,
-
         ]);
     }
 }

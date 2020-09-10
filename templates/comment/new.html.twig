@@ -9,7 +9,7 @@
                 page_title: 'title.comment_create',
                 attr: {
                     method: 'POST',
-                    action: url('comment_create')
+                    action: url('comment_create', {'postingId':comment.posting.id})
                 },
                 form: form,
                 submit_label: 'action.save'|trans,

@@ -6,6 +6,8 @@
 namespace App\Entity;
 
 /**
+ * Class Comment.
+ *
  * @ORM\Entity(repositoryClass=CommentRepository::class)
  */
 class Comment
@@ -31,6 +33,12 @@ class Comment
      * Content.
      *
      * @ORM\Column(type="text")
+     *
+     * @Assert\NotBlank()
+     * @Assert\Length(
+     *     min="3",
+     *     max="255",
+     * )
      */
     private $content;
 
@@ -43,6 +51,9 @@ class Comment
 
     /**
      * User.
+     *
+     * @var string
+     *
      * @ORM\Column(type="string", length=45)
      */
     private $user;
@@ -50,7 +61,7 @@ class Comment
     /**
      * Getter for id.
      *
-     * @return int|null
+     * @return int
      */
     public function getId(): ?int
     {
@@ -60,7 +71,7 @@ class Comment
     /**
      * Getter for posting.
      *
-     * @return Posting|null
+     * @return Posting
      */
     public function getPosting(): ?Posting
     {
@@ -70,7 +81,7 @@ class Comment
     /**
      * Setter for posting.
      *
-     * @param Posting|null $posting
+     * @param Posting $posting
      *
      * @return $this
      */
@@ -84,7 +95,7 @@ class Comment
     /**
      * Getter for content.
      *
-     * @return string|null
+     * @return string
      */
     public function getContent(): ?string
     {
@@ -108,7 +119,7 @@ class Comment
     /**
      * Getter for date.
      *
-     * @return \DateTimeInterface|null
+     * @return \DateTimeInterface
      */
     public function getDate(): ?\DateTimeInterface
     {
@@ -117,6 +128,7 @@ class Comment
 
     /**
      * Setter for date.
+     *
      * @param \DateTimeInterface $date
      *
      * @return $this
@@ -131,7 +143,7 @@ class Comment
     /**
      * Getter for user.
      *
-     * @return string|null
+     * @return string
      */
     public function getUser(): ?string
     {
@@ -142,6 +154,7 @@ class Comment
      * Setter for user.
      *
      * @param string $user
+     *
      * @return $this
      */
     public function setUser(string $user): self

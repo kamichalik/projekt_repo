@@ -10,7 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
- * Class ChangePasswordType
+ * Class ChangePasswordType.
  */
 class ChangePasswordType extends \Symfony\Component\Form\AbstractType
 {
@@ -39,7 +39,10 @@ class ChangePasswordType extends \Symfony\Component\Form\AbstractType
                 [
                     'label' => 'label.new_password',
                     'required' => true,
-                    'attr' => ['max_length' => 255],
+                    'attr' => [
+                        'max_length' => 255,
+                        'min_length' => 3,
+                    ],
                 ]
             )
             ->add(
@@ -48,7 +51,10 @@ class ChangePasswordType extends \Symfony\Component\Form\AbstractType
                 [
                     'label' => 'label.repeat_password',
                     'required' => true,
-                    'attr' => ['max_length' => 255],
+                    'attr' => [
+                        'max_length' => 255,
+                        'min_length' => 3,
+                    ],
                 ]
             )
             ->add(

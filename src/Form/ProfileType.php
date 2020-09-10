@@ -10,7 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
- * Class ProfileType
+ * Class ProfileType.
  */
 class ProfileType extends \Symfony\Component\Form\AbstractType
 {

@@ -8,6 +8,7 @@ namespace App\Controller;
 use App\Entity\Comment;
 use App\Form\CommentType;
 use App\Repository\CommentRepository;
+use App\Repository\PostingRepository;
 use Doctrine\ORM\ORMException;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,29 +16,23 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Class CommentController
+ * Class CommentController.
  */
 class CommentController extends AbstractController
 {
     /**
      * Index action.
      *
-     * @param CommentRepository  $commentRepository
-     * @param int                $pageNumber
      * @param Request            $request
+     * @param CommentRepository  $commentRepository
      * @param PaginatorInterface $paginator
      *
      * @return Response
      *
-     * @Route("/comments/{pageNumber}", name="comments", defaults={"pageNumber"=1}, methods={"GET"})
+     * @Route("/comments", name="comments", methods={"GET"})
      */
-    public function index(Request $request, PaginatorInterface $paginator, CommentRepository $commentRepository, int $pageNumber): Response
+    public function index(Request $request, CommentRepository $commentRepository, PaginatorInterface $paginator): Response
     {
-//        return $this->render('comment/index.html.twig', [
-//            'comments' => $commentRepository->findAll(),
-//            'pageNumber' => $pageNumber,
-//        ]);
-
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $pagination = $paginator->paginate(
@@ -55,15 +50,22 @@ class CommentController extends AbstractController
     /**
      * Create action.
      *
-     * @param Request $request
+     * @param Request           $request
+     * @param PostingRepository $postingRepository
+     * @param int               $postingId
      *
      * @return Response
      *
-     * @Route("/comment/new", name="comment_create", methods={"GET","POST"})
+     * @throws \Exception
+     *
+     * @Route("/comment/new/{postingId}", name="comment_create", requirements={"posting_id": "[1-9]\d*"}, methods={"GET","POST"})
      */
-    public function create(Request $request): Response
+    public function create(Request $request, PostingRepository $postingRepository, int $postingId): Response
     {
         $comment = new Comment();
+        $posting = $postingRepository->find($postingId);
+        $comment->setPosting($posting);
+
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
 
@@ -75,7 +77,7 @@ class CommentController extends AbstractController
 
             $this->addFlash('success', 'message.comment_created_successfully');
 
-            return $this->redirectToRoute('comments');
+            return $this->redirectToRoute('posting', ['id' => $postingId]);
         }
 
         return $this->render('comment/new.html.twig', [
@@ -91,7 +93,7 @@ class CommentController extends AbstractController
      *
      * @return Response
      *
-     * @Route("/comment/{id}", name="comment_view", methods={"GET"})
+     * @Route("/comment/{id}", name="comment_view", requirements={"id": "[1-9]\d*"}, methods={"GET"})
      */
     public function show(Comment $comment): Response
     {
@@ -108,15 +110,18 @@ class CommentController extends AbstractController
      * @param CommentRepository $repository
      * @param int               $id
      *
-     * @return \http\Env\Response|Response
+     * @return Response
+     *
+     * @throws ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
      *
      * @Route("/comment/{id}/update", name="comment_update", requirements={"id": "[1-9]\d*"}, methods={"GET","PUT"})
      */
-    public function update(Request $request, Comment $comment, CommentRepository $repository, int $id)
+    public function update(Request $request, Comment $comment, CommentRepository $repository, int $id): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $comment = $this->getComment($id);
+        $comment->getId();
         $form = $this->createForm(CommentType::class, $comment, ['method' => 'PUT']);
         $form->handleRequest($request);
 
@@ -142,14 +147,14 @@ class CommentController extends AbstractController
      * @param Comment           $comment
      * @param CommentRepository $repository
      *
-     * @return \http\Env\Response|Response
+     * @return Response
      *
      * @throws ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      *
      * @Route("/comment/{id}/delete", name="comment_delete", requirements={"id": "[1-9]\d*"}, methods={"GET", "DELETE"})
      */
-    public function delete(Request $request, Comment $comment, CommentRepository $repository)
+    public function delete(Request $request, Comment $comment, CommentRepository $repository): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -175,30 +180,5 @@ class CommentController extends AbstractController
                 'comment' => $comment,
             ]
         );
-    }
-
-    /**
-     * Repository getter.
-     *
-     * @return \Doctrine\Persistence\ObjectRepository
-     */
-    private function getRepository(): \Doctrine\Persistence\ObjectRepository
-    {
-        return $this->getDoctrine()->getRepository(Comment::class);
-    }
-
-    /**
-     * Comment getter.
-     *
-     * @param int $id
-     *
-     * @return Comment|object
-     */
-    private function getComment($id)
-    {
-        $doctrineRepo = $this->getRepository();
-        $comment = $doctrineRepo->find($id);
-
-        return $comment;
     }
 }

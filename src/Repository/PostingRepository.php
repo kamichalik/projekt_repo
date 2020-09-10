@@ -50,41 +50,10 @@ class PostingRepository extends ServiceEntityRepository
             ->orderBy('posting.id', 'DESC');
     }
 
-//    /**
-//     * Query postings by category.
-//     *
-//     * @param \App\Entity\Category $category
-//     *
-//     * @return \Doctrine\ORM\QueryBuilder Query builder
-//     */
-//    public function queryByCategory(Category $category = null): QueryBuilder
-//    {
-//        $queryBuilder = $this->queryAll();
-//
-//        if (!is_null($category)) {
-//            $queryBuilder->andWhere('posting.category = :category')
-//                ->setParameter('category', $category);
-//        }
-//
-//        return $queryBuilder;
-//    }
-
-    /**
-     * Get or create new query builder.
-     *
-     * @param \Doctrine\ORM\QueryBuilder|null $queryBuilder Query builder
-     *
-     * @return \Doctrine\ORM\QueryBuilder Query builder
-     */
-    private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
-    {
-        return $queryBuilder ?? $this->createQueryBuilder('posting');
-    }
-
     /**
      * Save record.
      *
-     * @param \App\Entity\Posting $posting
+     * @param Posting $posting
      *
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
@@ -98,7 +67,7 @@ class PostingRepository extends ServiceEntityRepository
     /**
      * Delete record.
      *
-     * @param \App\Entity\Posting $posting
+     * @param Posting $posting
      *
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
@@ -107,5 +76,17 @@ class PostingRepository extends ServiceEntityRepository
     {
         $this->_em->remove($posting);
         $this->_em->flush($posting);
+    }
+
+    /**
+     * Get or create new query builder.
+     *
+     * @param \Doctrine\ORM\QueryBuilder|null $queryBuilder Query builder
+     *
+     * @return \Doctrine\ORM\QueryBuilder Query builder
+     */
+    private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
+    {
+        return $queryBuilder ?? $this->createQueryBuilder('posting');
     }
 }

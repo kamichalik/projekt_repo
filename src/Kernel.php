@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 
 /**
- * Class Kernel
+ * Class Kernel.
  */
 class Kernel extends BaseKernel
 {
