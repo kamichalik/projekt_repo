@@ -5,6 +5,8 @@
 
 namespace App\Entity;
 
+use DateTimeInterface;
+
 /**
  * Class Comment.
  *
@@ -55,6 +57,15 @@ class Comment
      * @var string
      *
      * @ORM\Column(type="string", length=45)
+     *
+     * @Assert\Email(
+     *     message = "message.not_email"
+     * )
+     * @Assert\NotBlank()
+     * @Assert\Length(
+     *     min="3",
+     *     max="45",
+     * )
      */
     private $user;
 
@@ -119,9 +130,9 @@ class Comment
     /**
      * Getter for date.
      *
-     * @return \DateTimeInterface
+     * @return DateTimeInterface
      */
-    public function getDate(): ?\DateTimeInterface
+    public function getDate(): ?DateTimeInterface
     {
         return $this->date;
     }
@@ -129,11 +140,11 @@ class Comment
     /**
      * Setter for date.
      *
-     * @param \DateTimeInterface $date
+     * @param DateTimeInterface $date
      *
      * @return $this
      */
-    public function setDate(\DateTimeInterface $date): self
+    public function setDate(DateTimeInterface $date): self
     {
         $this->date = $date;
 

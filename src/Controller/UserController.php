@@ -12,6 +12,7 @@ use http\Env\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class UserController.
@@ -30,7 +31,7 @@ class UserController extends AbstractController
      * @throws \Doctrine\ORM\ORMException
      * @throws \Doctrine\ORM\OptimisticLockException
      *
-     * @Route("/user/update", name="user_update", methods={"GET", "PUT"})
+     * @Route("/user/update", name="user_update", methods={"GET", "POST"})
      */
     public function update(Request $request, UserRepository $repository, UserPasswordEncoderInterface $passwordEncoder)
     {
@@ -59,10 +60,10 @@ class UserController extends AbstractController
                 $this->addFlash('danger', 'log.not_match');
             } else {
                 $user->setPassword($passwordEncoder->encodePassword($this->getUser(), $newPassword));
-                $repository->save($user);
 
                 $this->addFlash('success', 'account.updated');
             }
+            $repository->save($user);
         }
 
         return $this->render('security/_profileform.html.twig', [

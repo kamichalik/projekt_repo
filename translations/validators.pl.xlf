@@ -10,7 +10,10 @@
                 <source>message.not_email</source>
                 <target>Podana wartość nie jest adresem email</target>
             </trans-unit>
-
+            <trans-unit id="message.not_url">
+                <source>message.not_url</source>
+                <target>Podana wartość nie jest adresem url</target>
+            </trans-unit>
 
         </body>
     </file>

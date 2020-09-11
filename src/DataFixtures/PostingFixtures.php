@@ -17,9 +17,9 @@ class PostingFixtures extends AbstractBaseFixtures
     /**
      * Load data.
      *
-     * @param \Doctrine\Persistence\ObjectManager $manager Persistence object manager
+     * @param ObjectManager $manager Persistence object manager
      */
-    public function loadData(ObjectManager $manager ): void
+    public function loadData(ObjectManager $manager): void
     {
         $this->createMany(50, 'postings', function ($i) use ($manager) {
             $category = $manager->getRepository(Category::class)->findBy(
@@ -33,7 +33,7 @@ class PostingFixtures extends AbstractBaseFixtures
             $posting->setTitle($this->faker->sentence);
             $posting->setDescription($this->faker->paragraph($nbSentences = 3, $variableNbSentences = true));
             $posting->setDate($this->faker->dateTime($max = 'now', $timezone = null));
-            $posting->setImg($this->faker->imageUrl($width = 640, $height = 480));
+            $posting->setImg($this->faker->imageUrl($width = 960, $height = 540));
             $posting->setCategory($this->getRandomReference('categories'));
             $posting->setPostedBy($this->faker->email);
 

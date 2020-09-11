@@ -33,6 +33,7 @@ class User implements UserInterface
      *     length=180,
      *     unique=true
      *)
+     *
      * @Assert\NotBlank
      * @Assert\Email(
      *     message = "message.not_email"
@@ -60,6 +61,10 @@ class User implements UserInterface
      *
      * @Assert\NotBlank
      * @Assert\Type(type="string")
+     * @Assert\Length(
+     *      min="3",
+     *      max="255",
+     * )
      */
     private $password;
 

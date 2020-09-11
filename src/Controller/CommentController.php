@@ -9,7 +9,10 @@ use App\Entity\Comment;
 use App\Form\CommentType;
 use App\Repository\CommentRepository;
 use App\Repository\PostingRepository;
+use DateTime;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Exception;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -56,7 +59,7 @@ class CommentController extends AbstractController
      *
      * @return Response
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @Route("/comment/new/{postingId}", name="comment_create", requirements={"posting_id": "[1-9]\d*"}, methods={"GET","POST"})
      */
@@ -71,7 +74,7 @@ class CommentController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager = $this->getDoctrine()->getManager();
-            $comment->setDate(new \DateTime('now'));
+            $comment->setDate(new DateTime('now'));
             $entityManager->persist($comment);
             $entityManager->flush();
 
@@ -113,7 +116,7 @@ class CommentController extends AbstractController
      * @return Response
      *
      * @throws ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws OptimisticLockException
      *
      * @Route("/comment/{id}/update", name="comment_update", requirements={"id": "[1-9]\d*"}, methods={"GET","PUT"})
      */
@@ -130,7 +133,7 @@ class CommentController extends AbstractController
 
             $this->addFlash('success', 'message.comment_updated_successfully');
 
-            return $this->redirect('/comments');
+            return $this->redirectToRoute('comments');
         }
 
         return $this->render('comment/update.html.twig', [
@@ -150,7 +153,7 @@ class CommentController extends AbstractController
      * @return Response
      *
      * @throws ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws OptimisticLockException
      *
      * @Route("/comment/{id}/delete", name="comment_delete", requirements={"id": "[1-9]\d*"}, methods={"GET", "DELETE"})
      */

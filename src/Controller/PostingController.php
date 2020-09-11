@@ -10,7 +10,10 @@ use App\Entity\Posting;
 use App\Form\PostingType;
 use App\Repository\CategoryRepository;
 use App\Repository\PostingRepository;
+use DateTime;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Exception;
 use http\Env\Response;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -77,7 +80,7 @@ class PostingController extends AbstractController
      *
      * @return Response|RedirectResponse|\Symfony\Component\HttpFoundation\Response
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @Route("/posting/create", name="posting_create", methods={"GET", "POST"})
      */
@@ -89,7 +92,7 @@ class PostingController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $posting->setIsActive(0);
-            $posting->setDate(new \DateTime('now'));
+            $posting->setDate(new DateTime('now'));
             $repository->save($posting);
 
             $this->addFlash('success', 'message.post_created_successfully');
@@ -114,7 +117,7 @@ class PostingController extends AbstractController
      * @return Response|\Symfony\Component\HttpFoundation\Response
      *
      * @throws ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws OptimisticLockException
      *
      * @Route("/posting/{id}/update", name="posting_update", requirements={"id": "[1-9]\d*"}, methods={"GET","PUT"})
      */
@@ -151,7 +154,7 @@ class PostingController extends AbstractController
      * @return RedirectResponse|\Symfony\Component\HttpFoundation\Response
      *
      * @throws ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws OptimisticLockException
      *
      * @Route("/posting/{id}/delete", name="posting_delete", requirements={"id": "[1-9]\d*"}, methods={"GET", "DELETE"})
      */
@@ -189,21 +192,21 @@ class PostingController extends AbstractController
      * @param Posting           $posting
      * @param PostingRepository $repository
      *
-     * @return RedirectResponse
+     * @return Response|RedirectResponse
      *
      * @throws ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws OptimisticLockException
      *
      * @Route("/{id}/activate", name="activate", requirements={"id"="\d+"})
      */
-    public function activate(Posting $posting, PostingRepository $repository): RedirectResponse
+    public function activate(Posting $posting, PostingRepository $repository)
     {
         $posting->setIsActive(1);
         $repository->save($posting);
 
         $this->addFlash('success', 'message.post_activated');
 
-        return new RedirectResponse('/~16_michalik/app/postings');
+        return $this->redirectToRoute('postings_admin');
     }
 
 
@@ -213,21 +216,21 @@ class PostingController extends AbstractController
      * @param Posting           $posting
      * @param PostingRepository $repository
      *
-     * @return RedirectResponse
+     * @return Response|RedirectResponse
      *
      * @throws ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws OptimisticLockException
      *
      * @Route("/{id}/deactivate", name="deactivate", requirements={"id"="\d+"})
      */
-    public function deactivate(Posting $posting, PostingRepository $repository): RedirectResponse
+    public function deactivate(Posting $posting, PostingRepository $repository)
     {
         $posting->setIsActive(0);
         $repository->save($posting);
 
         $this->addFlash('warning', 'message.post_deactivated');
 
-        return new RedirectResponse('/~16_michalik/app/postings');
+        return $this->redirectToRoute('postings_admin');
     }
 
     /**

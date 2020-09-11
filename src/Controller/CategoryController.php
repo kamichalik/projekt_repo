@@ -9,6 +9,9 @@ use App\Entity\Category;
 use App\Form\CategoryType;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\Entity;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use Exception;
 use http\Env\Response;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -54,7 +57,7 @@ class CategoryController extends AbstractController
      *
      * @return Response|\Symfony\Component\HttpFoundation\Response
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @Route("/category/create", name="category_create", methods={"GET", "POST"})
      */
@@ -92,8 +95,8 @@ class CategoryController extends AbstractController
      *
      * @return Response|\Symfony\Component\HttpFoundation\Response
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      *
      * @Route("/category/{id}/update", name="category_update", requirements={"id": "[1-9]\d*"}, methods={"GET","PUT"})
      */
@@ -109,7 +112,7 @@ class CategoryController extends AbstractController
 
             $this->addFlash('success', 'message.category_updated_successfully');
 
-            return $this->redirect('/categories');
+            return $this->redirectToRoute('categories');
         }
 
         return $this->render('category/update.html.twig', [
@@ -128,10 +131,10 @@ class CategoryController extends AbstractController
      *
      * @return RedirectResponse|\Symfony\Component\HttpFoundation\Response
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      *
-     * @Route("/category/{id}", name="category_delete", requirements={"id": "[1-9]\d*"}, methods={"GET", "DELETE"})
+     * @Route("/category/{id}/delete", name="category_delete", requirements={"id": "[1-9]\d*"}, methods={"GET", "DELETE"})
      */
     public function delete(Request $request, Category $category, CategoryRepository $repository)
     {

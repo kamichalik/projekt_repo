@@ -52,6 +52,9 @@ class Posting
      *
      * @ORM\Column(type="string", length=255)
      *
+     * @Assert\Url(
+     *     message="message.not_url"
+     * )
      * @Assert\Regex(
      *     pattern="/^$|(\S\.(jpe?g|png|gif|bmp)$)/",
      *     message="message.not_img"
@@ -144,7 +147,7 @@ class Posting
      *
      * @return DateTimeInterface
      */
-    public function getDate(): ?\DateTimeInterface
+    public function getDate(): ?DateTimeInterface
     {
         return $this->date;
     }
@@ -170,7 +173,7 @@ class Posting
      *
      * @return $this
      */
-    public function setDate(\DateTimeInterface $date): self
+    public function setDate(DateTimeInterface $date): self
     {
         $this->date = $date;
 
