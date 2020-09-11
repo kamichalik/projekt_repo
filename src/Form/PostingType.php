@@ -65,6 +65,15 @@ class PostingType extends AbstractType
                     'label' => 'label.img',
                     'required' => false,
                 ]
+            )
+
+            ->add(
+                'posted_by',
+                TextType::class,
+                [
+                    'label' => 'label.posted_by',
+                    'required' => true,
+                ]
             );
     }
 

@@ -7,10 +7,13 @@
         <div class="col-md-8 offset-md-2">
             <h1 class="my-5">{{ post.title }}</h1>
             <div class="row py-3 border-top border-primary">
-                <div class="col-6">
+                <div class="col-4">{{ 'title.posted_by'|trans }}:
+                    {{ post.postedBy }}
+                </div>
+                <div class="col-4">
                 {{ post.date|format_date('long') }}
                 </div>
-                <div class="col-6">{{ 'label.category'|trans }}:
+                <div class="col-4">{{ 'label.category'|trans }}:
                     {{ post.category.name }}
                 </div>
             </div>
@@ -21,11 +24,13 @@
             </div>
         </div>
         <div class="row justify-content-center">
+            <div class="col-4"></div>
             <div class="col-8 my-3">
-            {% if post.getImgPath is not empty %}
+            {% if post.getImg is not empty %}
                 <img src="{{ post.img }}" class="img-fluid img-thumbnail">
             {% endif %}
             </div>
+            <div class="col-4"></div>
         </div>
     </div>
     <div class="row mt-5">
@@ -55,7 +60,8 @@
                             {{ comment.content }}
                         </div>
                         {% if is_granted('ROLE_ADMIN') %}
-                            <a class="btn btn-danger align-self-center"  href="{{ path('comment_delete', {'id': comment.id}) }}">{{ 'action.delete'|trans }}</a>
+                            <a class="btn btn-warning align-self-center"  href="{{ path('comment_update', {'id': comment.id}) }}">{{ 'action.update'|trans }}</a>
+                            <a class="btn btn-danger align-self-center ml-2"  href="{{ path('comment_delete', {'id': comment.id}) }}">{{ 'action.delete'|trans }}</a>
                         {% endif %}
                     </div>
                 {% endfor %}

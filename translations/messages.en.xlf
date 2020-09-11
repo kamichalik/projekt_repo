@@ -302,13 +302,14 @@
                 <source>log.incorrect_pw</source>
                 <target>Incorrect password</target>
             </trans-unit>
-
-
-
-
-
-
-
+            <trans-unit id="title.posted_by">
+                <source>title.posted_by</source>
+                <target>Posted by</target>
+            </trans-unit>
+            <trans-unit id="label.posted_by">
+                <source>label.posted_by</source>
+                <target>Email address</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

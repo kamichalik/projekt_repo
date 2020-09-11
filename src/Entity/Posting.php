@@ -55,7 +55,7 @@ class Posting
      * @Assert\Regex(
      *     pattern="/^$|(\S\.(jpe?g|png|gif|bmp)$)/",
      *     message="message.not_img"
-     *);
+     *)
      */
     private $img;
 
@@ -95,6 +95,23 @@ class Posting
     private $isActive;
 
     /**
+     * Posted by.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="string", length=45)
+     *
+     * @Assert\NotBlank()
+     * @Assert\Email
+     * @Assert\Type(type="string")
+     * @Assert\Length(
+     *     min="3",
+     *     max="45",
+     * )
+     */
+    private $postedBy;
+
+    /**
      * Posting constructor.
      */
     public function __construct()
@@ -113,6 +130,16 @@ class Posting
     }
 
     /**
+     * Getter for postedBy.
+     *
+     * @return string
+     */
+    public function getPostedBy(): ?string
+    {
+        return $this->postedBy;
+    }
+
+    /**
      * Getter for date.
      *
      * @return DateTimeInterface
@@ -120,6 +147,20 @@ class Posting
     public function getDate(): ?\DateTimeInterface
     {
         return $this->date;
+    }
+
+    /**
+     * Setter for postedBy.
+     *
+     * @param string $postedBy
+     *
+     * @return $this
+     */
+    public function setPostedBy(string $postedBy): self
+    {
+        $this->postedBy = $postedBy;
+
+        return $this;
     }
 
     /**

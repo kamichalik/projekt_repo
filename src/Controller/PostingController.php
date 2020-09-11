@@ -186,7 +186,7 @@ class PostingController extends AbstractController
     /**
      * Activate posting.
      *
-     * @param Posting $posting
+     * @param Posting           $posting
      * @param PostingRepository $repository
      *
      * @return RedirectResponse
@@ -210,7 +210,7 @@ class PostingController extends AbstractController
     /**
      * Dectivate posting.
      *
-     * @param Posting $posting
+     * @param Posting           $posting
      * @param PostingRepository $repository
      *
      * @return RedirectResponse
