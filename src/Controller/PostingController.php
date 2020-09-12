@@ -10,6 +10,7 @@ use App\Entity\Posting;
 use App\Form\PostingType;
 use App\Repository\CategoryRepository;
 use App\Repository\PostingRepository;
+use App\Service\PostingService;
 use DateTime;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -17,6 +18,7 @@ use Exception;
 use http\Env\Response;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -25,6 +27,23 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class PostingController extends AbstractController
 {
+    /**
+     * Posting service.
+     *
+     * @var PostingService
+     */
+    private $postingService;
+
+    /**
+     * PostingController constructor.
+     *
+     * @param PostingService $postingService
+     */
+    public function __construct(PostingService $postingService)
+    {
+        $this->postingService = $postingService;
+    }
+
     /**
      * Index action.
      *
@@ -40,11 +59,8 @@ class PostingController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $pagination = $paginator->paginate(
-            $postingRepository->queryAll(),
-            $request->query->getInt('page', 1),
-            PostingRepository::PAGINATOR_ITEMS_PER_PAGE
-        );
+        $page = $request->query->getInt('page', 1);
+        $pagination = $this->postingService->createPaginatedList($page);
 
         return $this->render(
             'posting/index.html.twig',
@@ -75,8 +91,7 @@ class PostingController extends AbstractController
     /**
      * Create action.
      *
-     * @param Request           $request
-     * @param PostingRepository $repository
+     * @param Request $request
      *
      * @return Response|RedirectResponse|\Symfony\Component\HttpFoundation\Response
      *
@@ -84,7 +99,7 @@ class PostingController extends AbstractController
      *
      * @Route("/posting/create", name="posting_create", methods={"GET", "POST"})
      */
-    public function create(Request $request, PostingRepository $repository)
+    public function create(Request $request)
     {
         $posting = new Posting();
         $form = $this->createForm(PostingType::class, $posting);
@@ -93,7 +108,7 @@ class PostingController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $posting->setIsActive(0);
             $posting->setDate(new DateTime('now'));
-            $repository->save($posting);
+            $this->postingService->save($posting);
 
             $this->addFlash('success', 'message.post_created_successfully');
 
@@ -109,10 +124,9 @@ class PostingController extends AbstractController
     /**
      * Update action.
      *
-     * @param Request           $request
-     * @param Posting           $posting
-     * @param PostingRepository $repository
-     * @param int               $id
+     * @param Request $request
+     * @param Posting $posting
+     * @param int     $id
      *
      * @return Response|\Symfony\Component\HttpFoundation\Response
      *
@@ -121,7 +135,7 @@ class PostingController extends AbstractController
      *
      * @Route("/posting/{id}/update", name="posting_update", requirements={"id": "[1-9]\d*"}, methods={"GET","PUT"})
      */
-    public function update(Request $request, Posting $posting, PostingRepository $repository, int $id)
+    public function update(Request $request, Posting $posting, int $id)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -130,7 +144,7 @@ class PostingController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $repository->save($posting);
+            $this->postingService->save($posting);
 
             $this->addFlash('success', 'message.post_updated_successfully');
 
@@ -147,9 +161,8 @@ class PostingController extends AbstractController
     /**
      * Delete action.
      *
-     * @param Request           $request
-     * @param Posting           $posting
-     * @param PostingRepository $repository
+     * @param Request $request
+     * @param Posting $posting
      *
      * @return RedirectResponse|\Symfony\Component\HttpFoundation\Response
      *
@@ -158,11 +171,11 @@ class PostingController extends AbstractController
      *
      * @Route("/posting/{id}/delete", name="posting_delete", requirements={"id": "[1-9]\d*"}, methods={"GET", "DELETE"})
      */
-    public function delete(Request $request, Posting $posting, PostingRepository $repository)
+    public function delete(Request $request, Posting $posting)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $form = $this->createForm(PostingType::class, $posting, ['method' => 'DELETE']);
+        $form = $this->createForm(FormType::class, $posting, ['method' => 'DELETE']);
         $form->handleRequest($request);
 
         if ($request->isMethod('DELETE') && !$form->isSubmitted()) {
@@ -170,7 +183,7 @@ class PostingController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $repository->delete($posting);
+            $this->postingService->delete($posting);
 
             $this->addFlash('success', 'message.post_deleted_successfully');
 
@@ -189,8 +202,7 @@ class PostingController extends AbstractController
     /**
      * Activate posting.
      *
-     * @param Posting           $posting
-     * @param PostingRepository $repository
+     * @param Posting $posting
      *
      * @return Response|RedirectResponse
      *
@@ -199,10 +211,10 @@ class PostingController extends AbstractController
      *
      * @Route("/{id}/activate", name="activate", requirements={"id"="\d+"})
      */
-    public function activate(Posting $posting, PostingRepository $repository)
+    public function activate(Posting $posting)
     {
         $posting->setIsActive(1);
-        $repository->save($posting);
+        $this->postingService->save($posting);
 
         $this->addFlash('success', 'message.post_activated');
 
@@ -213,8 +225,7 @@ class PostingController extends AbstractController
     /**
      * Dectivate posting.
      *
-     * @param Posting           $posting
-     * @param PostingRepository $repository
+     * @param Posting $posting
      *
      * @return Response|RedirectResponse
      *
@@ -223,10 +234,10 @@ class PostingController extends AbstractController
      *
      * @Route("/{id}/deactivate", name="deactivate", requirements={"id"="\d+"})
      */
-    public function deactivate(Posting $posting, PostingRepository $repository)
+    public function deactivate(Posting $posting)
     {
         $posting->setIsActive(0);
-        $repository->save($posting);
+        $this->postingService->save($posting);
 
         $this->addFlash('warning', 'message.post_deactivated');
 

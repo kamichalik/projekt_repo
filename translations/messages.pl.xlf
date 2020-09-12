@@ -138,6 +138,10 @@
                 <source>title_category_create</source>
                 <target>Utwórz kategorię</target>
             </trans-unit>
+            <trans-unit id="title.category_delete">
+                <source>title.category_delete</source>
+                <target>Usuń kategorię</target>
+            </trans-unit>
             <trans-unit id="title.post_create">
                 <source>title.post_create</source>
                 <target>Utwórz ogłoszenie</target>

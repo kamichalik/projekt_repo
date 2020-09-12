@@ -7,14 +7,14 @@ namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Form\CommentType;
-use App\Repository\CommentRepository;
 use App\Repository\PostingRepository;
+use App\Service\CommentService;
 use DateTime;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Exception;
-use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,25 +24,37 @@ use Symfony\Component\HttpFoundation\Response;
 class CommentController extends AbstractController
 {
     /**
+     * Comment service.
+     *
+     * @var CommentService
+     */
+    private $commentService;
+
+    /**
+     * CommentController constructor.
+     *
+     * @param CommentService $commentService
+     */
+    public function __construct(CommentService $commentService)
+    {
+        $this->commentService = $commentService;
+    }
+
+    /**
      * Index action.
      *
-     * @param Request            $request
-     * @param CommentRepository  $commentRepository
-     * @param PaginatorInterface $paginator
+     * @param Request $request
      *
      * @return Response
      *
      * @Route("/comments", name="comments", methods={"GET"})
      */
-    public function index(Request $request, CommentRepository $commentRepository, PaginatorInterface $paginator): Response
+    public function index(Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $pagination = $paginator->paginate(
-            $commentRepository->queryAll(),
-            $request->query->getInt('page', 1),
-            CommentRepository::PAGINATOR_ITEMS_PER_PAGE
-        );
+        $page = $request->query->getInt('page', 1);
+        $pagination = $this->commentService->createPaginatedList($page);
 
         return $this->render(
             'comment/index.html.twig',
@@ -73,10 +85,8 @@ class CommentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
             $comment->setDate(new DateTime('now'));
-            $entityManager->persist($comment);
-            $entityManager->flush();
+            $this->commentService->save($comment);
 
             $this->addFlash('success', 'message.comment_created_successfully');
 
@@ -108,10 +118,9 @@ class CommentController extends AbstractController
     /**
      * Update action.
      *
-     * @param Request           $request
-     * @param Comment           $comment
-     * @param CommentRepository $repository
-     * @param int               $id
+     * @param Request $request
+     * @param Comment $comment
+     * @param int     $id
      *
      * @return Response
      *
@@ -120,7 +129,7 @@ class CommentController extends AbstractController
      *
      * @Route("/comment/{id}/update", name="comment_update", requirements={"id": "[1-9]\d*"}, methods={"GET","PUT"})
      */
-    public function update(Request $request, Comment $comment, CommentRepository $repository, int $id): Response
+    public function update(Request $request, Comment $comment, int $id): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -129,7 +138,7 @@ class CommentController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $repository->save($comment);
+            $this->commentService->save($comment);
 
             $this->addFlash('success', 'message.comment_updated_successfully');
 
@@ -146,9 +155,8 @@ class CommentController extends AbstractController
     /**
      * Delete action.
      *
-     * @param Request           $request
-     * @param Comment           $comment
-     * @param CommentRepository $repository
+     * @param Request $request
+     * @param Comment $comment
      *
      * @return Response
      *
@@ -157,11 +165,11 @@ class CommentController extends AbstractController
      *
      * @Route("/comment/{id}/delete", name="comment_delete", requirements={"id": "[1-9]\d*"}, methods={"GET", "DELETE"})
      */
-    public function delete(Request $request, Comment $comment, CommentRepository $repository): Response
+    public function delete(Request $request, Comment $comment): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $form = $this->createForm(CommentType::class, $comment, ['method' => 'DELETE']);
+        $form = $this->createForm(FormType::class, $comment, ['method' => 'DELETE']);
         $form->handleRequest($request);
 
         if ($request->isMethod('DELETE') && !$form->isSubmitted()) {
@@ -169,7 +177,7 @@ class CommentController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $repository->delete($comment);
+            $this->commentService->delete($comment);
 
             $this->addFlash('success', 'message.comment_deleted_successfully');
 

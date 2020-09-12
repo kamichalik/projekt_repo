@@ -8,6 +8,8 @@ namespace App\Controller;
 use App\Form\ChangePasswordType;
 use App\Form\ProfileType;
 use App\Repository\UserRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use http\Env\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,15 +30,15 @@ class UserController extends AbstractController
      *
      * @return Response|\Symfony\Component\HttpFoundation\Response
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      *
-     * @Route("/user/update", name="user_update", methods={"GET", "POST"})
+     * @Route("/user/update", name="user_update", methods={"GET", "PUT", "POST"})
      */
     public function update(Request $request, UserRepository $repository, UserPasswordEncoderInterface $passwordEncoder)
     {
         $emailForm = $this->createForm(ProfileType::class, ['email' => $this->getUser()->getUsername()], ['method' => 'PUT']);
-        $passwordForm = $this->createForm(ChangePasswordType::class);
+        $passwordForm = $this->createForm(ChangePasswordType::class, ['method' => 'POST']);
 
         $emailForm->handleRequest($request);
         $passwordForm->handleRequest($request);

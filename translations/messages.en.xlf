@@ -118,6 +118,10 @@
                 <source>title.category_update</source>
                 <target>Update category</target>
             </trans-unit>
+            <trans-unit id="title.category_delete">
+                <source>title.category_delete</source>
+                <target>Delete category</target>
+            </trans-unit>
             <trans-unit id="title.comment_create">
                 <source>title.comment_create</source>
                 <target>Create comment</target>

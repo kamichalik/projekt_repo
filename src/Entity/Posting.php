@@ -55,10 +55,7 @@ class Posting
      * @Assert\Url(
      *     message="message.not_url"
      * )
-     * @Assert\Regex(
-     *     pattern="/^$|(\S\.(jpe?g|png|gif|bmp)$)/",
-     *     message="message.not_img"
-     *)
+     *
      */
     private $img;
 

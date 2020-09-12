@@ -7,6 +7,8 @@ namespace App\Repository;
 
 use App\Entity\Posting;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -15,6 +17,10 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Posting|null findOneBy(array $criteria, array $orderBy = null)
  * @method Posting[]    findAll()
  * @method Posting[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
+
+/**
+ * Class PostingRepository
  */
 class PostingRepository extends ServiceEntityRepository
 {
@@ -42,11 +48,18 @@ class PostingRepository extends ServiceEntityRepository
     /**
      * Query all records.
      *
-     * @return \Doctrine\ORM\QueryBuilder Query builder
+     * @return QueryBuilder Query builder
      */
     public function queryAll(): QueryBuilder
     {
         return $this->getOrCreateQueryBuilder()
+            ->select(
+                'partial posting.{id, title, date, img, isActive, description}',
+                'partial category.{id, name}',
+                'partial comments.{id}'
+            )
+            ->join('posting.category', 'category')
+            ->leftJoin('posting.comments', 'comments')
             ->orderBy('posting.id', 'DESC');
     }
 
@@ -55,8 +68,8 @@ class PostingRepository extends ServiceEntityRepository
      *
      * @param Posting $posting
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function save(Posting $posting): void
     {
@@ -69,8 +82,8 @@ class PostingRepository extends ServiceEntityRepository
      *
      * @param Posting $posting
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function delete(Posting $posting): void
     {
@@ -81,9 +94,9 @@ class PostingRepository extends ServiceEntityRepository
     /**
      * Get or create new query builder.
      *
-     * @param \Doctrine\ORM\QueryBuilder|null $queryBuilder Query builder
+     * @param QueryBuilder|null $queryBuilder Query builder
      *
-     * @return \Doctrine\ORM\QueryBuilder Query builder
+     * @return QueryBuilder Query builder
      */
     private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
     {

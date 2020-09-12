@@ -7,6 +7,8 @@ namespace App\Repository;
 
 use App\Entity\Comment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -15,6 +17,10 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Comment|null findOneBy(array $criteria, array $orderBy = null)
  * @method Comment[]    findAll()
  * @method Comment[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
+
+/**
+ * Class CommentRepository
  */
 class CommentRepository extends ServiceEntityRepository
 {
@@ -42,11 +48,16 @@ class CommentRepository extends ServiceEntityRepository
     /**
      * Query all records.
      *
-     * @return \Doctrine\ORM\QueryBuilder Query builder
+     * @return QueryBuilder Query builder
      */
     public function queryAll(): QueryBuilder
     {
         return $this->getOrCreateQueryBuilder()
+            ->select(
+                'partial comment.{id, content, date, user}',
+                'partial posting.{id}'
+            )
+            ->join('comment.posting', 'posting')
             ->orderBy('comment.id', 'DESC');
     }
 
@@ -55,8 +66,8 @@ class CommentRepository extends ServiceEntityRepository
      *
      * @param Comment $comment
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function save(Comment $comment): void
     {
@@ -69,8 +80,8 @@ class CommentRepository extends ServiceEntityRepository
      *
      * @param Comment $comment
      *
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function delete(Comment $comment): void
     {
@@ -81,9 +92,9 @@ class CommentRepository extends ServiceEntityRepository
     /**
      * Get or create new query builder.
      *
-     * @param \Doctrine\ORM\QueryBuilder|null $queryBuilder Query builder
+     * @param QueryBuilder|null $queryBuilder Query builder
      *
-     * @return \Doctrine\ORM\QueryBuilder Query builder
+     * @return QueryBuilder Query builder
      */
     private function getOrCreateQueryBuilder(QueryBuilder $queryBuilder = null): QueryBuilder
     {
